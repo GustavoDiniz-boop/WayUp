@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mentorias - Meu Plano de Carreira</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .collapse-content {
+      display: none;
+    }
+    .collapse-content.active {
+      display: block;
+    }
+    /* Estilo personalizado para o checkbox */
+    .custom-checkbox {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #3b82f6;
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+    }
+    .custom-checkbox:checked {
+      background-color: #3b82f6;
+    }
+    .custom-checkbox:checked::after {
+      content: "✔";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans">
+  <!-- Header -->
+  <header class="bg-white shadow-md p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-blue-600">Meu Plano de Carreira</h1>
+    <div class="flex items-center space-x-4">
+      <span class="text-gray-700">Olá, João!</span>
+      <div class="w-10 h-10 bg-gray-300 rounded-full"></div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-md p-4">
+      <nav>
+        <ul class="space-y-2">
+          <li><a href="#" class="text-gray-700 hover:text-blue-600">Dashboard</a></li>
+          <li><a href="#" class="text-gray-700 hover:text-blue-600">Metas</a></li>
+          <li><a href="#" class="text-gray-700 hover:text-blue-600">Habilidades</a></li>
+          <li><a href="#" class="text-gray-700 hover:text-blue-600">Mentorias</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Mentorias -->
+    <main class="flex-1 p-6">
+      <!-- Seção de Mentorias Ativas -->
+      <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Mentorias Ativas</h2>
+        <div class="space-y-4">
+          <!-- Mentoria 1 -->
+          <div class="p-4 bg-blue-50 rounded-lg">
+            <div class="flex items-center justify-between cursor-pointer" onclick="toggleCollapse('mentoria1')">
+              <div>
+                <span class="text-gray-700">Mentoria com Maria Silva</span>
+                <p class="text-sm text-gray-600">Foco em Liderança e Gestão de Equipes</p>
+              </div>
+              <span class="text-sm text-blue-600">2 encontros restantes</span>
+            </div>
+            <!-- Checklist -->
+            <div id="mentoria1" class="collapse-content mt-4">
+              <div class="space-y-2">
+                <!-- Tarefa 1 -->
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <input type="checkbox" class="custom-checkbox">
+                    <span class="text-gray-700">Preparar apresentação de liderança</span>
+                  </div>
+                  <button class="p-1 bg-red-500 text-white rounded hover:bg-red-600">Remover</button>
+                </div>
+                <!-- Tarefa 2 -->
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <input type="checkbox" class="custom-checkbox">
+                    <span class="text-gray-700">Revisar feedback do último encontro</span>
+                  </div>
+                  <button class="p-1 bg-red-500 text-white rounded hover:bg-red-600">Remover</button>
+                </div>
+                <button class="w-full p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">
+                  + Adicionar Tarefa
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- Mentoria 2 -->
+          <div class="p-4 bg-blue-50 rounded-lg">
+            <div class="flex items-center justify-between cursor-pointer" onclick="toggleCollapse('mentoria2')">
+              <div>
+                <span class="text-gray-700">Mentoria com Carlos Oliveira</span>
+                <p class="text-sm text-gray-600">Desenvolvimento de Carreira e Networking</p>
+              </div>
+              <span class="text-sm text-blue-600">5 encontros restantes</span>
+            </div>
+            <!-- Checklist -->
+            <div id="mentoria2" class="collapse-content mt-4">
+              <div class="space-y-2">
+                <!-- Tarefa 1 -->
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <input type="checkbox" class="custom-checkbox">
+                    <span class="text-gray-700">Atualizar currículo</span>
+                  </div>
+                  <button class="p-1 bg-red-500 text-white rounded hover:bg-red-600">Remover</button>
+                </div>
+                <!-- Tarefa 2 -->
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <input type="checkbox" class="custom-checkbox">
+                    <span class="text-gray-700">Participar de evento de networking</span>
+                  </div>
+                  <button class="p-1 bg-red-500 text-white rounded hover:bg-red-600">Remover</button>
+                </div>
+                <button class="w-full p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">
+                  + Adicionar Tarefa
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- Botão para Adicionar Mentoria -->
+          <button class="w-full p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+            + Adicionar Mentoria
+          </button>
+        </div>
+      </div>
+
+      <!-- Seção de Mentorias Concluídas -->
+      <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Mentorias Concluídas</h2>
+        <div class="space-y-4">
+          <!-- Mentoria 1 -->
+          <div class="p-4 bg-green-50 rounded-lg">
+            <div class="flex items-center justify-between cursor-pointer" onclick="toggleCollapse('mentoria3')">
+              <div>
+                <span class="text-gray-700">Mentoria com Ana Costa</span>
+                <p class="text-sm text-gray-600">Gestão de Projetos e Metodologias Ágeis</p>
+              </div>
+              <span class="text-sm text-green-600">Concluída</span>
+            </div>
+            <!-- Checklist -->
+            <div id="mentoria3" class="collapse-content mt-4">
+              <div class="space-y-2">
+                <!-- Tarefa 1 -->
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <input type="checkbox" class="custom-checkbox">
+                    <span class="text-gray-700">Finalizar curso de Scrum</span>
+                  </div>
+                  <button class="p-1 bg-red-500 text-white rounded hover:bg-red-600">Remover</button>
+                </div>
+                <!-- Tarefa 2 -->
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <input type="checkbox" class="custom-checkbox">
+                    <span class="text-gray-700">Apresentar projeto final</span>
+                  </div>
+                  <button class="p-1 bg-red-500 text-white rounded hover:bg-red-600">Remover</button>
+                </div>
+                <button class="w-full p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">
+                  + Adicionar Tarefa
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- Mentoria 2 -->
+          <div class="p-4 bg-green-50 rounded-lg">
+            <div class="flex items-center justify-between cursor-pointer" onclick="toggleCollapse('mentoria4')">
+              <div>
+                <span class="text-gray-700">Mentoria com Pedro Santos</span>
+                <p class="text-sm text-gray-600">Comunicação Eficaz e Oratória</p>
+              </div>
+              <span class="text-sm text-green-600">Concluída</span>
+            </div>
+            <!-- Checklist -->
+            <div id="mentoria4" class="collapse-content mt-4">
+              <div class="space-y-2">
+                <!-- Tarefa 1 -->
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <input type="checkbox" class="custom-checkbox">
+                    <span class="text-gray-700">Praticar discurso final</span>
+                  </div>
+                  <button class="p-1 bg-red-500 text-white rounded hover:bg-red-600">Remover</button>
+                </div>
+                <!-- Tarefa 2 -->
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <input type="checkbox" class="custom-checkbox">
+                    <span class="text-gray-700">Gravar vídeo de apresentação</span>
+                  </div>
+                  <button class="p-1 bg-red-500 text-white rounded hover:bg-red-600">Remover</button>
+                </div>
+                <button class="w-full p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">
+                  + Adicionar Tarefa
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seção para Avaliações de Mentorias -->
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Avaliações de Mentorias</h2>
+        <div class="space-y-4">
+          <!-- Avaliação 1 -->
+          <div class="p-4 bg-yellow-50 rounded-lg">
+            <h3 class="text-md font-semibold text-gray-800">Mentoria com Ana Costa</h3>
+            <p class="text-sm text-gray-600">Avalie sua experiência com a mentoria.</p>
+            <div class="mt-2 flex space-x-2">
+              <button class="p-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition duration-300">
+                Avaliar
+              </button>
+            </div>
+          </div>
+          <!-- Avaliação 2 -->
+          <div class="p-4 bg-yellow-50 rounded-lg">
+            <h3 class="text-md font-semibold text-gray-800">Mentoria com Pedro Santos</h3>
+            <p class="text-sm text-gray-600">Avalie sua experiência com a mentoria.</p>
+            <div class="mt-2 flex space-x-2">
+              <button class="p-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition duration-300">
+                Avaliar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Função para expandir/colapsar os checklists
+    function toggleCollapse(id) {
+      const content = document.getElementById(id);
+      content.classList.toggle('active');
+    }
+  </script>
+</body>
+</html>
