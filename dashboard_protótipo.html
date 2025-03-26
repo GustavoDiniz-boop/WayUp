@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plano de Carreira</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <!-- Header -->
+  <header class="bg-white shadow-md p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-blue-600">Meu Plano de Carreira</h1>
+    <div class="flex items-center space-x-4">
+      <span class="text-gray-700">Olá, João!</span>
+      <div class="w-10 h-10 bg-gray-300 rounded-full"></div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-md p-4">
+      <nav>
+        <ul class="space-y-2">
+          <li><a href="#" class="text-gray-700 hover:text-blue-600">Dashboard</a></li>
+          <li><a href="#" class="text-gray-700 hover:text-blue-600">Metas</a></li>
+          <li><a href="#" class="text-gray-700 hover:text-blue-600">Habilidades</a></li>
+          <li><a href="#" class="text-gray-700 hover:text-blue-600">Mentorias</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Dashboard -->
+    <main class="flex-1 p-6">
+      <!-- Progresso Geral -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <!-- Card de Nível de Progresso -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-lg font-semibold text-gray-800">Nível de Progresso</h2>
+          <div class="flex justify-center mt-4">
+            <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center">
+              <span class="text-2xl font-bold text-blue-600">75%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card de Habilidades Desenvolvidas -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-lg font-semibold text-gray-800">Habilidades Desenvolvidas</h2>
+          <div class="mt-4">
+            <div class="flex justify-between mb-2">
+              <span>Liderança</span>
+              <span class="text-blue-600">80%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-blue-600 h-2 rounded-full" style="width: 80%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card de Metas Alcançadas -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-lg font-semibold text-gray-800">Metas Alcançadas</h2>
+          <div class="mt-4">
+            <div class="flex justify-between mb-2">
+              <span>Promoção</span>
+              <span class="text-blue-600">3/5</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-blue-600 h-2 rounded-full" style="width: 60%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mural de Atividades Atuais -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+               <!-- Seção de Habilidades -->
+               <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4">Habilidades em Desenvolvimento</h2>
+                <div class="space-y-4">
+                  <!-- Atividade 1 -->
+                  <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+                    <span class="text-gray-700">Curso de Liderança</span>
+                    <span class="text-sm text-blue-600">80% concluído</span>
+                  </div>
+                  <!-- Atividade 2 -->
+                  <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+                    <span class="text-gray-700">Workshop de Gestão de Tempo</span>
+                    <span class="text-sm text-blue-600">50% concluído</span>
+                  </div>
+                  <!-- Botão para Adicionar Atividade -->
+                  <button class="w-full p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+                    + Adicionar Atividade
+                  </button>
+                </div>
+              </div>
+      
+              <!-- Seção de Metas -->
+              <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4">Metas em Andamento</h2>
+                <div class="space-y-4">
+                  <!-- Meta 1 -->
+                  <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+                    <span class="text-gray-700">Atingir Meta de Vendas</span>
+                    <span class="text-sm text-green-600">75% concluído</span>
+                  </div>
+                  <!-- Meta 2 -->
+                  <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+                    <span class="text-gray-700">Concluir Projeto X</span>
+                    <span class="text-sm text-green-600">40% concluído</span>
+                  </div>
+                  <!-- Botão para Adicionar Meta -->
+                  <button class="w-full p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">
+                    + Adicionar Meta
+                  </button>
+                </div>
+              </div>
+            </div>
+      
+            <!-- Seção para Adicionar Mais Tópicos -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+              <h2 class="text-lg font-semibold text-gray-800 mb-4">Outros Tópicos</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Tópico 1: Cursos -->
+                <div class="p-4 bg-purple-50 rounded-lg">
+                  <h3 class="text-md font-semibold text-gray-800">Cursos</h3>
+                  <p class="text-sm text-gray-600">Adicione cursos para aprimorar suas habilidades.</p>
+                  <button class="mt-2 p-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition duration-300">
+                    + Adicionar Curso
+                  </button>
+                </div>
+                <!-- Tópico 2: Feedback -->
+                <div class="p-4 bg-yellow-50 rounded-lg">
+                  <h3 class="text-md font-semibold text-gray-800">Feedback</h3>
+                  <p class="text-sm text-gray-600">Solicite feedback para melhorar seu desempenho.</p>
+                  <button class="mt-2 p-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition duration-300">
+                    + Solicitar Feedback
+                  </button>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </body>
+      </html>
