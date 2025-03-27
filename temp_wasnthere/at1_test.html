@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metas - Meu Plano de Carreira</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .collapse-content {
+      display: none;
+    }
+    .collapse-content.active {
+      display: block;
+    }
+    /* Estilo personalizado para o checkbox */
+    .custom-checkbox {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #3b82f6;
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+    }
+    .custom-checkbox:checked {
+      background-color: #3b82f6;
+    }
+    .custom-checkbox:checked::after {
+      content: "✔";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans">
+  <!-- Header -->
+  <header class="bg-white shadow-md p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-blue-600">Meu Plano de Carreira</h1>
+    <div class="flex items-center space-x-4">
+      <span class="text-gray-700">Olá, João!</span>
+      <div class="w-10 h-10 bg-gray-300 rounded-full"></div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-md p-4">
+      <nav>
+        <ul class="space-y-2">
+          <li><a href="#" class="text-gray-700 hover:text-blue-600">Dashboard</a></li>
+          <li><a href="#" class="text-gray-700 hover:text-blue-600">Metas</a></li>
+          <li><a href="#" class="text-gray-700 hover:text-blue-600">Habilidades</a></li>
+          <li><a href="#" class="text-gray-700 hover:text-blue-600">Mentorias</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Metas -->
+    <main class="flex-1 p-6">
+      <!-- Seção de Metas Ativas -->
+      <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Metas Ativas</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Meta 1 -->
+          <div class="p-4 bg-blue-50 rounded-lg flex flex-col h-48">
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="text-gray-700">Promoção para Gerente</span>
+                  <p class="text-sm text-gray-600">Concluir cursos e atingir KPIs</p>
+                </div>
+                <span class="text-sm text-blue-600">60% concluído</span>
+              </div>
+              <div class="mt-4">
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="bg-blue-600 h-2 rounded-full" style="width: 60%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-auto">
+              <button class="w-full p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+                Ver Detalhes
+              </button>
+            </div>
+          </div>
+          <!-- Meta 2 -->
+          <div class="p-4 bg-blue-50 rounded-lg flex flex-col h-48">
+            <div class="flex-1">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <span class="text-gray-700">Certificação em Gestão de Projetos</span>
+                    <p class="text-sm text-gray-600">Estudar e passar no exame</p>
+                  </div>
+                  <span class="text-sm text-blue-600">40% concluído</span>
+                </div>
+                <div class="mt-4">
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full" style="width: 40%;"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-auto">
+                <button class="w-full p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+                  Ver Detalhes
+                </button>
+              </div>
+            </div>
+            <!-- Meta 3 -->
+            <div class="p-4 bg-blue-50 rounded-lg flex flex-col h-48">
+              <div class="flex-1">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <span class="text-gray-700">Aprender Inglês Avançado</span>
+                    <p class="text-sm text-gray-600">Completar curso e praticar conversação</p>
+                    <p class="text-sm text-gray-600">Completar curso de Oratória em inglês</p>
+                    <p class="text-sm text-gray-600">Mini Palestra da história do Inglês</p>
+                    <p class="text-sm text-gray-600">Mini Palestra da história do Inglês Intermediário</p>
+                    <p class="text-sm text-gray-600">Mini Palestra da história do Inglês Avançado</p>
+                  </div>
+                  <span class="text-sm text-blue-600">25% concluído</span>
+                </div>
+                <div class="mt-4">
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full" style="width: 25%;"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-auto">
+                <button class="w-full p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+                  Ver Detalhes
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- Botão para Adicionar Meta -->
+          <button class="w-full p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 mt-6">
+            + Adicionar Meta
+          </button>
+        </div>
+  
+        <!-- Seção de Metas Concluídas -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+          <h2 class="text-lg font-semibold text-gray-800 mb-4">Metas Concluídas</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Meta 1 -->
+            <div class="p-4 bg-green-50 rounded-lg flex flex-col h-48">
+              <div class="flex-1">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <span class="text-gray-700">Certificação em Marketing Digital</span>
+                    <p class="text-sm text-gray-600">Concluído em 15/10/2023</p>
+                  </div>
+                  <span class="text-sm text-green-600">100% concluído</span>
+                </div>
+                <div class="mt-4">
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-green-600 h-2 rounded-full" style="width: 100%;"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-auto">
+                <button class="w-full p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">
+                  Ver Detalhes
+                </button>
+              </div>
+            </div>
+            <!-- Meta 2 -->
+            <div class="p-4 bg-green-50 rounded-lg flex flex-col h-48">
+              <div class="flex-1">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <span class="text-gray-700">Curso de Liderança</span>
+                    <p class="text-sm text-gray-600">Concluído em 30/09/2023</p>
+                  </div>
+                  <span class="text-sm text-green-600">100% concluído</span>
+                </div>
+                <div class="mt-4">
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-green-600 h-2 rounded-full" style="width:                  100%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-auto">
+              <button class="w-full p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">
+                Ver Detalhes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Função para expandir/colapsar os checklists
+    function toggleCollapse(id) {
+      const content = document.getElementById(id);
+      content.classList.toggle('active');
+    }
+  </script>
+</body>
+</html>
