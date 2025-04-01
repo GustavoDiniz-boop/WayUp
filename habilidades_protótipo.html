@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plano de Carreira - Habilidades</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Estilo personalizado para checkboxes */
+    .custom-checkbox:checked {
+      background-color: #3b82f6;
+      border-color: #3b82f6;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans">
+  <!-- Header -->
+  <header class="bg-white shadow p-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-2xl font-bold">Meu Plano de Carreira</h1>
+      <div class="flex items-center">
+        <img src="https://via.placeholder.com/40" alt="Avatar" class="rounded-full">
+        <span class="ml-2">Usuário</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container mx-auto mt-8 flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white p-4 shadow">
+      <nav>
+        <ul>
+          <li class="mb-2"><a href="#" class="text-gray-700 hover:text-blue-500">Dashboard</a></li>
+          <li class="mb-2"><a href="#" class="text-gray-700 hover:text-blue-500">Metas</a></li>
+          <li class="mb-2"><a href="#" class="text-blue-500 font-bold">Habilidades</a></li>
+          <li class="mb-2"><a href="#" class="text-gray-700 hover:text-blue-500">Mentorias</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Seção de Habilidades -->
+    <main class="flex-1 ml-8">
+      <h2 class="text-2xl font-bold mb-6">Habilidades</h2>
+
+      <!-- Formulário para Adicionar Habilidade -->
+      <div class="bg-white p-6 rounded-lg shadow mb-8">
+        <h3 class="text-xl font-semibold mb-4">Adicionar Nova Habilidade</h3>
+        <form id="addSkillForm" class="space-y-4">
+          <div>
+            <label for="skillName" class="block text-sm font-medium text-gray-700">Nome da Habilidade</label>
+            <input type="text" id="skillName" name="skillName" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+          </div>
+          <div>
+            <label for="skillCategory" class="block text-sm font-medium text-gray-700">Categoria</label>
+            <select id="skillCategory" name="skillCategory" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+              <option value="Técnicas">Técnicas</option>
+              <option value="Comportamentais">Comportamentais</option>
+              <option value="Liderança">Liderança</option>
+            </select>
+          </div>
+          <div>
+            <label for="skillLevel" class="block text-sm font-medium text-gray-700">Nível de Proficiência</label>
+            <select id="skillLevel" name="skillLevel" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+              <option value="Iniciante">Iniciante</option>
+              <option value="Intermediário">Intermediário</option>
+              <option value="Avançado">Avançado</option>
+            </select>
+          </div>
+          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Adicionar</button>
+        </form>
+      </div>
+
+      <!-- Lista de Habilidades -->
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h3 class="text-xl font-semibold mb-4">Minhas Habilidades</h3>
+        <div id="skillsList" class="space-y-4">
+          <!-- Exemplo de Habilidade (será preenchido dinamicamente via JavaScript) -->
+          <div class="p-4 border border-gray-200 rounded-lg">
+            <div class="flex justify-between items-center">
+              <div>
+                <h4 class="font-semibold">Desenvolvimento Front-end</h4>
+                <p class="text-sm text-gray-600">Categoria: Técnicas</p>
+                <p class="text-sm text-gray-600">Nível: Intermediário</p>
+              </div>
+              <div class="flex space-x-2">
+                <button onclick="editSkill(this)" class="text-blue-500 hover:text-blue-700">Editar</button>
+                <button onclick="removeSkill(this)" class="text-red-500 hover:text-red-700">Remover</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal para Editar Habilidade -->
+  <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+    <div class="bg-white p-6 rounded-lg w-96">
+      <h3 class="text-xl font-semibold mb-4">Editar Habilidade</h3>
+      <form id="editSkillForm" class="space-y-4">
+        <div>
+          <label for="editSkillName" class="block text-sm font-medium text-gray-700">Nome da Habilidade</label>
+          <input type="text" id="editSkillName" name="editSkillName" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+        </div>
+        <div>
+          <label for="editSkillCategory" class="block text-sm font-medium text-gray-700">Categoria</label>
+          <select id="editSkillCategory" name="editSkillCategory" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+            <option value="Técnicas">Técnicas</option>
+            <option value="Comportamentais">Comportamentais</option>
+            <option value="Liderança">Liderança</option>
+          </select>
+        </div>
+        <div>
+          <label for="editSkillLevel" class="block text-sm font-medium text-gray-700">Nível de Proficiência</label>
+          <select id="editSkillLevel" name="editSkillLevel" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+            <option value="Iniciante">Iniciante</option>
+            <option value="Intermediário">Intermediário</option>
+            <option value="Avançado">Avançado</option>
+          </select>
+        </div>
+        <div class="flex justify-end space-x-2">
+          <button type="button" onclick="closeEditModal()" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">Cancelar</button>
+          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JavaScript para Funcionalidades -->
+  <script>
+    let skills = []; // Array para armazenar as habilidades
+    let editIndex = null; // Índice da habilidade sendo editada
+
+    // Função para adicionar uma nova habilidade
+    document.getElementById('addSkillForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const skillName = document.getElementById('skillName').value;
+      const skillCategory = document.getElementById('skillCategory').value;
+      const skillLevel = document.getElementById('skillLevel').value;
+
+      const newSkill = {
+        name: skillName,
+        category: skillCategory,
+        level: skillLevel
+      };
+
+      skills.push(newSkill);
+      renderSkills();
+      document.getElementById('addSkillForm').reset();
+    });
+
+    // Função para renderizar a lista de habilidades
+    function renderSkills() {
+    const skillsList = document.getElementById('skillsList');
+    skillsList.innerHTML = ''; // Limpa a lista atual
+
+    skills.forEach((skill, index) => {
+        const skillItem = document.createElement('div');
+        skillItem.className = 'p-4 border border-gray-200 rounded-lg';
+
+        skillItem.innerHTML = `
+        <div class="flex justify-between items-center">
+            <div>
+            <h4 class="font-semibold">${skill.name}</h4>
+            <p class="text-sm text-gray-600">Categoria: ${skill.category}</p>
+            <p class="text-sm text-gray-600">Nível: ${skill.level}</p>
+            </div>
+            <div class="flex space-x-2">
+            <button onclick="editSkill(${index})" class="text-blue-500 hover:text-blue-700">Editar</button>
+            <button onclick="removeSkill(${index})" class="text-red-500 hover:text-red-700">Remover</button>
+            </div>
+        </div>
+        `;
+
+        skillsList.appendChild(skillItem); // Adiciona a habilidade à lista
+    });
+    }
+
+    // Função para abrir o modal de edição
+    function editSkill(index) {
+      editIndex = index;
+      const skill = skills[index];
+      document.getElementById('editSkillName').value = skill.name;
+      document.getElementById('editSkillCategory').value = skill.category;
+      document.getElementById('editSkillLevel').value = skill.level;
+      document.getElementById('editModal').classList.remove('hidden');
+    }
+
+    // Função para fechar o modal de edição
+    function closeEditModal() {
+      document.getElementById('editModal').classList.add('hidden');
+    }
+
+    // Função para salvar a edição de uma habilidade
+    document.getElementById('editSkillForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const skillName = document.getElementById('editSkillName').value;
+      const skillCategory = document.getElementById('editSkillCategory').value;
+      const skillLevel = document.getElementById('editSkillLevel').value;
+
+      skills[editIndex] = {
+        name: skillName,
+        category: skillCategory,
+        level: skillLevel
+      };
+
+      renderSkills();
+      closeEditModal();
+    });
+
+    // Função para remover uma habilidade
+    function removeSkill(index) {
+      skills.splice(index, 1);
+      renderSkills();
+    }
+
+    // Renderizar habilidades iniciais (opcional)
+    skills = [
+      { name: 'Desenvolvimento Front-end', category: 'Técnicas', level: 'Intermediário' },
+      { name: 'Comunicação Eficaz', category: 'Comportamentais', level: 'Avançado' }
+    ];
+    renderSkills();
+  </script>
+</body>
+</html>
