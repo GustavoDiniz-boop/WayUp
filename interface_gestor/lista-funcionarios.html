@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Funcionários</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <!-- Header -->
+  <header class="bg-white shadow p-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-2xl font-bold">Lista de Funcionários</h1>
+      <div class="flex items-center">
+        <img src="https://via.placeholder.com/40" alt="Avatar" class="rounded-full">
+        <span class="ml-2">Gestor</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container mx-auto mt-8 flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white p-4 shadow">
+      <nav>
+        <ul>
+          <li class="mb-2"><a href="dashboard-gestor.html" class="text-gray-700 hover:text-blue-500">Dashboard</a></li>
+          <li class="mb-2"><a href="lista-funcionarios.html" class="text-blue-500 font-bold">Lista de Funcionários</a></li>
+          <li class="mb-2"><a href="perfil-funcionario.html" class="text-gray-700 hover:text-blue-500">Perfil do Funcionário</a></li>
+          <li class="mb-2"><a href="atribuicao-metas.html" class="text-gray-700 hover:text-blue-500">Atribuição de Metas</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-1 ml-8">
+      <h2 class="text-2xl font-bold mb-6">Funcionários</h2>
+
+      <!-- Tabela de Funcionários -->
+      <div class="bg-white p-6 rounded-lg shadow">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b">
+              <th class="p-2 text-left">Nome</th>
+              <th class="p-2 text-left">Cargo</th>
+              <th class="p-2 text-left">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b hover:bg-gray-50">
+              <td class="p-2">Maria Silva</td>
+              <td class="p-2">Analista</td>
+              <td class="p-2 text-green-500">Ativo</td>
+            </tr>
+            <tr class="border-b hover:bg-gray-50">
+              <td class="p-2">João Souza</td>
+              <td class="p-2">Desenvolvedor</td>
+              <td class="p-2 text-yellow-500">Em treinamento</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

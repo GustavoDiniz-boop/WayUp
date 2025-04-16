@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil do Funcionário</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <!-- Header -->
+  <header class="bg-white shadow p-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-2xl font-bold">Perfil do Funcionário</h1>
+      <div class="flex items-center">
+        <img src="https://via.placeholder.com/40" alt="Avatar" class="rounded-full">
+        <span class="ml-2">Gestor</span>
+    </div>
+  </div>
+</header>
+
+<!-- Main Content -->
+<div class="container mx-auto mt-8 flex">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white p-4 shadow">
+    <nav>
+      <ul>
+        <li class="mb-2"><a href="dashboard-gestor.html" class="text-gray-700 hover:text-blue-500">Dashboard</a></li>
+        <li class="mb-2"><a href="lista-funcionarios.html" class="text-gray-700 hover:text-blue-500">Lista de Funcionários</a></li>
+        <li class="mb-2"><a href="perfil-funcionario.html" class="text-blue-500 font-bold">Perfil do Funcionário</a></li>
+        <li class="mb-2"><a href="atribuicao-metas.html" class="text-gray-700 hover:text-blue-500">Atribuição de Metas</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Conteúdo Principal -->
+  <main class="flex-1 ml-8">
+    <h2 class="text-2xl font-bold mb-6">Perfil de Maria Silva</h2>
+
+    <!-- Informações do Funcionário -->
+    <div class="bg-white p-6 rounded-lg shadow mb-8">
+      <h3 class="text-xl font-semibold mb-4">Informações Pessoais</h3>
+      <p><span class="font-semibold">Nome:</span> Maria Silva</p>
+      <p><span class="font-semibold">Cargo:</span> Analista</p>
+      <p><span class="font-semibold">Departamento:</span> Marketing</p>
+    </div>
+
+    <!-- Metas do Funcionário -->
+    <div class="bg-white p-6 rounded-lg shadow mb-8">
+      <h3 class="text-xl font-semibold mb-4">Metas</h3>
+      <ul class="space-y-2">
+        <li class="p-2 border border-gray-200 rounded-lg">Completar treinamento de liderança</li>
+        <li class="p-2 border border-gray-200 rounded-lg">Aprender Power BI</li>
+      </ul>
+    </div>
+
+    <!-- Habilidades do Funcionário -->
+    <div class="bg-white p-6 rounded-lg shadow mb-8">
+      <h3 class="text-xl font-semibold mb-4">Habilidades</h3>
+      <ul class="space-y-2">
+        <li class="p-2 border border-gray-200 rounded-lg">Comunicação</li>
+        <li class="p-2 border border-gray-200 rounded-lg">Excel avançado</li>
+      </ul>
+    </div>
+
+    <!-- Mentorias do Funcionário -->
+    <div class="bg-white p-6 rounded-lg shadow">
+      <h3 class="text-xl font-semibold mb-4">Mentorias</h3>
+      <p>Mentorada por Carlos Oliveira</p>
+    </div>
+  </main>
+</div>
+</body>
+</html>

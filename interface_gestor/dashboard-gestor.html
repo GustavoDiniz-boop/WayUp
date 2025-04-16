@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard do Gestor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Para gráficos -->
+</head>
+<body class="bg-gray-100 font-sans">
+  <!-- Header -->
+  <header class="bg-white shadow p-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-2xl font-bold">Dashboard do Gestor</h1>
+      <div class="flex items-center">
+        <img src="https://via.placeholder.com/40" alt="Avatar" class="rounded-full">
+        <span class="ml-2">Gestor</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container mx-auto mt-8 flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white p-4 shadow">
+      <nav>
+        <ul>
+          <li class="mb-2"><a href="dashboard-gestor.html" class="text-blue-500 font-bold">Dashboard</a></li>
+          <li class="mb-2"><a href="lista-funcionarios.html" class="text-gray-700 hover:text-blue-500">Lista de Funcionários</a></li>
+          <li class="mb-2"><a href="perfil-funcionario.html" class="text-gray-700 hover:text-blue-500">Perfil do Funcionário</a></li>
+          <li class="mb-2"><a href="atribuicao-metas.html" class="text-gray-700 hover:text-blue-500">Atribuição de Metas</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-1 ml-8">
+      <h2 class="text-2xl font-bold mb-6">Visão Geral</h2>
+
+      <!-- Gráficos de Progresso -->
+      <div class="bg-white p-6 rounded-lg shadow mb-8">
+        <h3 class="text-xl font-semibold mb-4">Progresso da Equipe</h3>
+        <canvas id="progressChart" class="w-full h-64"></canvas>
+      </div>
+
+      <!-- Metas Pendentes -->
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h3 class="text-xl font-semibold mb-4">Metas Pendentes</h3>
+        <ul id="pendingGoals" class="space-y-2">
+          <!-- Metas serão preenchidas dinamicamente via JavaScript -->
+        </ul>
+      </div>
+    </main>
+  </div>
+
+  <!-- JavaScript para Gráficos e Dados -->
+  <script>
+    // Dados de exemplo para o gráfico
+    const progressChart = new Chart(document.getElementById('progressChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Maria Silva', 'João Souza', 'Ana Costa'],
+        datasets: [{
+          label: 'Progresso (%)',
+          data: [75, 50, 90],
+          backgroundColor: ['#3b82f6', '#10b981', '#f59e0b'],
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100
+          }
+        }
+      }
+    });
+
+    // Dados de exemplo para metas pendentes
+    const pendingGoals = [
+      { name: 'Maria Silva', goal: 'Completar treinamento de liderança' },
+      { name: 'João Souza', goal: 'Aprender Power BI' }
+    ];
+
+    const pendingGoalsList = document.getElementById('pendingGoals');
+    pendingGoals.forEach(goal => {
+      const listItem = document.createElement('li');
+      listItem.className = 'p-2 border border-gray-200 rounded-lg';
+      listItem.innerHTML = `
+        <span class="font-semibold">${goal.name}</span>: ${goal.goal}
+      `;
+      pendingGoalsList.appendChild(listItem);
+    });
+  </script>
+</body>
+</html>

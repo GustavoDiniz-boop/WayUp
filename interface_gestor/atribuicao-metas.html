@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atribuição de Metas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <!-- Header -->
+  <header class="bg-white shadow p-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-2xl font-bold">Atribuição de Metas</h1>
+      <div class="flex items-center">
+        <img src="https://via.placeholder.com/40" alt="Avatar" class="rounded-full">
+        <span class="ml-2">Gestor</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container mx-auto mt-8 flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white p-4 shadow">
+        <nav>
+            <ul>
+              <li class="mb-2"><a href="dashboard-gestor.html" class="text-gray-700 hover:text-blue-500">Dashboard</a></li>
+              <li class="mb-2"><a href="lista-funcionarios.html" class="text-gray-700 hover:text-blue-500">Lista de Funcionários</a></li>
+              <li class="mb-2"><a href="perfil-funcionario.html" class="text-gray-700 hover:text-blue-500">Perfil do Funcionário</a></li>
+              <li class="mb-2"><a href="atribuicao-metas.html" class="text-blue-500 font-bold">Atribuição de Metas</a></li>
+            </ul>
+          </nav>
+        </aside>
+    
+        <!-- Conteúdo Principal -->
+        <main class="flex-1 ml-8">
+          <h2 class="text-2xl font-bold mb-6">Atribuir Nova Meta</h2>
+    
+          <!-- Formulário para Atribuição de Metas -->
+          <div class="bg-white p-6 rounded-lg shadow">
+            <form id="goalAssignmentForm">
+              <div class="mb-4">
+                <label for="funcionario" class="block text-sm font-medium text-gray-700">Funcionário:</label>
+                <input type="text" id="funcionario" name="funcionario" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+              </div>
+    
+              <div class="mb-4">
+                <label for="meta" class="block text-sm font-medium text-gray-700">Meta:</label>
+                <input type="text" id="meta" name="meta" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+              </div>
+    
+              <div class="mb-4">
+                <label for="prazo" class="block text-sm font-medium text-gray-700">Prazo:</label>
+                <input type="date" id="prazo" name="prazo" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+              </div>
+    
+              <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">Atribuir Meta</button>
+            </form>
+          </div>
+        </main>
+      </div>
+    
+      <script>
+        // Lógica para atribuir a meta (exemplo simples)
+        document.getElementById('goalAssignmentForm').addEventListener('submit', function(event) {
+          event.preventDefault(); // Impede o envio do formulário
+    
+          const funcionario = document.getElementById('funcionario').value;
+          const meta = document.getElementById('meta').value;
+          const prazo = document.getElementById('prazo').value;
+    
+          // Aqui você pode adicionar a lógica para salvar a meta
+          alert(`Meta atribuída a ${funcionario}: "${meta}" com prazo ${prazo}`);
+          
+          // Limpar o formulário após a atribuição
+          this.reset();
+        });
+      </script>
+    </body>
+    </html>        <ul>
+          <li class="mb-2"><
