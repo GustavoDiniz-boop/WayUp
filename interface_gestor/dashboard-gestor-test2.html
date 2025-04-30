@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard do Gestor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .sidebar {
+      transition: all 0.3s ease;
+    }
+    
+    .sidebar-collapsed {
+      width: 80px;
+    }
+    
+    .sidebar-collapsed .sidebar-text {
+      display: none;
+    }
+    
+    .sidebar-collapsed .sidebar-icon {
+      margin-right: 0;
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    
+    canvas {
+      transition: none !important;
+      transform: none !important;
+    }
+    
+    .progress-ring__circle {
+      transition: stroke-dashoffset 0.5s;
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <div class="sidebar bg-indigo-800 text-white flex flex-col">
+      <div class="p-4 flex items-center justify-between border-b border-indigo-700">
+        <div class="flex items-center">
+          <i class="fas fa-chart-line text-xl sidebar-icon mr-3"></i>
+          <span class="sidebar-text font-bold text-lg">GestãoCarreira</span>
+        </div>
+        <button id="toggleSidebar" class="text-white focus:outline-none">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      
+      <nav class="flex-1 p-4 space-y-2">
+        <a href="#" class="flex items-center p-2 rounded-lg bg-indigo-700">
+          <i class="fas fa-tachometer-alt sidebar-icon mr-3"></i>
+          <span class="sidebar-text">Dashboard</span>
+        </a>
+        <a href="#" class="flex items-center p-2 rounded-lg hover:bg-indigo-700">
+          <i class="fas fa-users sidebar-icon mr-3"></i>
+          <span class="sidebar-text">Funcionários</span>
+        </a>
+        <a href="#" class="flex items-center p-2 rounded-lg hover:bg-indigo-700">
+          <i class="fas fa-chart-pie sidebar-icon mr-3"></i>
+          <span class="sidebar-text">Relatórios</span>
+        </a>
+        <a href="#" class="flex items-center p-2 rounded-lg hover:bg-indigo-700">
+          <i class="fas fa-cog sidebar-icon mr-3"></i>
+          <span class="sidebar-text">Configurações</span>
+        </a>
+      </nav>
+      
+      <div class="p-4 border-t border-indigo-700">
+        <div class="flex items-center">
+          <img src="/api/placeholder/40/40" alt="Avatar" class="rounded-full w-10 h-10">
+          <div class="ml-3 sidebar-text">
+            <div class="font-medium">Gestor</div>
+            <div class="text-xs text-indigo-300">Administrador</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- Header -->
+      <header class="bg-white shadow-sm">
+        <div class="flex items-center justify-between p-4">
+          <h1 class="text-2xl font-bold text-gray-800">Dashboard do Gestor</h1>
+          <div class="flex items-center space-x-4">
+            <div class="relative">
+              <i class="fas fa-bell text-gray-500 hover:text-indigo-600 cursor-pointer"></i>
+              <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+            </div>
+            <div class="relative">
+              <input type="text" placeholder="Pesquisar..." class="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+        <!-- Cards Resumo -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+          <div class="bg-white rounded-xl shadow-md p-6 card-hover transition-all duration-300">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-500">Total Funcionários</p>
+                <h3 class="text-2xl font-bold">42</h3>
+              </div>
+              <div class="bg-indigo-100 p-3 rounded-full">
+                <i class="fas fa-users text-indigo-600 text-xl"></i>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="flex items-center text-sm text-green-500">
+                <i class="fas fa-arrow-up mr-1"></i>
+                <span>5% desde o último mês</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-md p-6 card-hover transition-all duration-300">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-500">Avaliações Pendentes</p>
+                <h3 class="text-2xl font-bold">8</h3>
+              </div>
+              <div class="bg-yellow-100 p-3 rounded-full">
+                <i class="fas fa-clipboard-list text-yellow-600 text-xl"></i>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="flex items-center text-sm text-red-500">
+                <i class="fas fa-arrow-up mr-1"></i>
+                <span>3 desde a semana passada</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-md p-6 card-hover transition-all duration-300">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-500">Desempenho Médio</p>
+                <h3 class="text-2xl font-bold">78%</h3>
+              </div>
+              <div class="bg-green-100 p-3 rounded-full">
+                <i class="fas fa-chart-line text-green-600 text-xl"></i>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="flex items-center text-sm text-green-500">
+                <i class="fas fa-arrow-up mr-1"></i>
+                <span>2% desde o último trimestre</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-md p-6 card-hover transition-all duration-300">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-500">Satisfação</p>
+                <h3 class="text-2xl font-bold">89%</h3>
+              </div>
+              <div class="bg-blue-100 p-3 rounded-full">
+                <i class="fas fa-smile text-blue-600 text-xl"></i>
+              </div>
+            </div>
+            <div class="mt-4">
+              <div class="flex items-center text-sm text-green-500">
+                <i class="fas fa-arrow-up mr-1"></i>
+                <span>3% desde o último mês</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gráfico Principal -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          <div class="bg-white rounded-xl shadow-md p-6 lg:col-span-2">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-lg font-semibold">Desempenho da Equipe</h2>
+              <select class="border rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <option>Últimos 7 dias</option>
+                <option>Últimos 30 dias</option>
+                <option selected>Últimos 90 dias</option>
+                <option>Este ano</option>
+              </select>
+            </div>
+            <canvas id="teamPerformanceChart" height="250"></canvas>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-md p-6">
+            <h2 class="text-lg font-semibold mb-4">Distribuição por Departamento</h2>
+            <canvas id="departmentDistributionChart" height="250"></canvas>
+          </div>
+        </div>
+
+        <!-- Funcionários -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+            <h2 class="text-lg font-semibold">Funcionários</h2>
+            <div class="flex space-x-2 mt-3 sm:mt-0">
+              <button id="addEmployeeBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center">
+                <i class="fas fa-plus mr-2"></i> Adicionar Funcionário
+              </button>
+              <button id="evaluateBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center" onclick="showEvaluationForm()">
+                <i class="fas fa-clipboard-check mr-2"></i> Avaliar
+              </button>
+              <div class="relative">
+                <button id="filterBtn" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center">
+                  <i class="fas fa-filter mr-2"></i> Filtrar
+                </button>
+                <div id="filterDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg p-4 z-10">
+                  <h3 class="font-medium mb-2">Filtrar por:</h3>
+                  <div class="space-y-2 mb-3">
+                    <label class="block text-sm">Departamento</label>
+                    <select class="w-full border rounded-lg px-3 py-2 text-sm">
+                      <option value="">Todos</option>
+                      <option value="TI">TI</option>
+                      <option value="Marketing">Marketing</option>
+                      <option value="Vendas">Vendas</option>
+                      <option value="RH">RH</option>
+                    </select>
+                  </div>
+                  <div class="space-y-2 mb-3">
+                    <label class="block text-sm">Status</label>
+                    <select class="w-full border rounded-lg px-3 py-2 text-sm">
+                      <option value="">Todos</option>
+                      <option value="ativo">Ativo</option>
+                      <option value="inativo">Inativo</option>
+                    </select>
+                  </div>
+                  <div class="space-y-2">
+                    <label class="block text-sm">Progresso mínimo</label>
+                    <input type="range" min="0" max="100" value="0" class="w-full" id="progressFilter">
+                    <div class="flex justify-between text-xs text-gray-500">
+                      <span id="progressValue">0%</span>
+                      <span>100%</span>
+                    </div>
+                  </div>
+                  <div class="flex justify-end mt-3">
+                    <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded text-sm">
+                      Aplicar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Funcionário</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cargo</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progresso</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Última Avaliação</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200" id="employeeTableBody">
+                <!-- Dados serão inseridos via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="flex justify-between items-center mt-4">
+            <div class="text-sm text-gray-500">
+              Mostrando <span id="startItem">1</span> a <span id="endItem">5</span> de <span id="totalItems">10</span> resultados
+            </div>
+            <div class="flex space-x-1">
+              <button class="px-3 py-1 border rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200" id="prevPageBtn">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <button class="px-3 py-1 border rounded-lg bg-indigo-600 text-white">1</button>
+              <button class="px-3 py-1 border rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200">2</button>
+              <button class="px-3 py-1 border rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200">3</button>
+              <button class="px-3 py-1 border rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200" id="nextPageBtn">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Funcionários em Destaque -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+          <div class="bg-white rounded-xl shadow-md p-6">
+            <h2 class="text-lg font-semibold mb-4">Funcionários em Destaque</h2>
+            <div class="space-y-4">
+              <div class="flex items-center p-3 bg-green-50 rounded-lg">
+                <img src="/api/placeholder/40/40" alt="Foto" class="w-10 h-10 rounded-full">
+                <div class="ml-3">
+                  <p class="font-medium">Ana Oliveira</p>
+                  <p class="text-sm text-gray-500">Desempenho: 95%</p>
+                </div>
+                <div class="ml-auto">
+                  <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Top 1</span>
+                </div>
+              </div>
+              
+              <div class="flex items-center p-3 bg-green-50 rounded-lg">
+                <img src="/api/placeholder/40/40" alt="Foto" class="w-10 h-10 rounded-full">
+                <div class="ml-3">
+                  <p class="font-medium">Fernanda Costa</p>
+                  <p class="text-sm text-gray-500">Desempenho: 90%</p>
+                </div>
+                <div class="ml-auto">
+                  <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Top 2</span>
+                </div>
+              </div>
+              
+              <div class="flex items-center p-3 bg-green-50 rounded-lg">
+                <img src="/api/placeholder/40/40" alt="Foto" class="w-10 h-10 rounded-full">
+                <div class="ml-3">
+                  <p class="font-medium">Pedro Almeida</p>
+                  <p class="text-sm text-gray-500">Desempenho: 88%</p>
+                </div>
+                <div class="ml-auto">
+                  <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Top 3</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-md p-6">
+            <h2 class="text-lg font-semibold mb-4">Avaliações Recentes</h2>
+            <div class="space-y-4">
+              <div class="border-l-4 border-indigo-500 pl-3">
+                <p class="font-medium">Maria Silva</p>
+                <p class="text-sm text-gray-500">Avaliação de desempenho: 8.5/10</p>
+                <p class="text-xs text-gray-400">Hoje, 10:23</p>
+              </div>
+              
+              <div class="border-l-4 border-indigo-500 pl-3">
+                <p class="font-medium">João Souza</p>
+                <p class="text-sm text-gray-500">Avaliação de habilidades: 7/10</p>
+                <p class="text-xs text-gray-400">Ontem, 15:45</p>
+              </div>
+              
+              <div class="border-l-4 border-indigo-500 pl-3">
+                <p class="font-medium">Carlos Pereira</p>
+                <p class="text-sm text-gray-500">Avaliação de competências: 6.5/10</p>
+                <p class="text-xs text-gray-400">28/04/2025, 09:15</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-md p-6">
+            <h2 class="text-lg font-semibold mb-4">Próximas Avaliações</h2>
+            <div class="space-y-4">
+              <div class="flex items-center">
+                <div class="bg-yellow-100 p-2 rounded-full">
+                  <i class="fas fa-clock text-yellow-600"></i>
+                </div>
+                <div class="ml-3">
+                  <p class="font-medium">Lucas Mendes</p>
+                  <p class="text-sm text-gray-500">Avaliação de desempenho</p>
+                  <p class="text-xs text-gray-400">05/05/2025</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center">
+                <div class="bg-yellow-100 p-2 rounded-full">
+                  <i class="fas fa-clock text-yellow-600"></i>
+                </div>
+                <div class="ml-3">
+                  <p class="font-medium">Renata Lima</p>
+                  <p class="text-sm text-gray-500">Avaliação de habilidades</p>
+                  <p class="text-xs text-gray-400">10/05/2025</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center">
+                <div class="bg-yellow-100 p-2 rounded-full">
+                  <i class="fas fa-clock text-yellow-600"></i>
+                </div>
+                <div class="ml-3">
+                  <p class="font-medium">Bruno Santos</p>
+                  <p class="text-sm text-gray-500">Avaliação de competências</p>
+                  <p class="text-xs text-gray-400">15/05/2025</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal para Adicionar Funcionário -->
+  <div id="addEmployeeModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-lg">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold">Adicionar Funcionário</h2>
+          <button onclick="closeAddEmployeeModal()" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
+            <input type="text" id="employeeName" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Nome do funcionário">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
+            <input type="email" id="employeeEmail" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="email@exemplo.com">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Cargo</label>
+            <input type="text" id="employeePosition" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Cargo">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Departamento</label>
+            <select id="employeeDepartment" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option>Selecione</option>
+              <option>TI</option>
+              <option>Marketing</option>
+              <option>Vendas</option>
+              <option>RH</option>
+              <option>Financeiro</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Data de Admissão</label>
+            <input type="date" id="employeeHireDate" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Gestor</label>
+            <select id="employeeManager" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option>Selecione</option>
+              <option>Carlos Mendes</option>
+              <option>Ana Beatriz</option>
+              <option>Roberto Souza</option>
+            </select>
+          </div>
+          
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Habilidades</label>
+            <input type="text" id="employeeSkills" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Habilidades separadas por vírgula">
+          </div>
+          
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Observações</label>
+            <textarea id="employeeNotes" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" rows="3" placeholder="Observações adicionais"></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-gray-50 px-6 py-3 rounded-b-xl flex justify-end space-x-3">
+        <button onclick="closeAddEmployeeModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100">
+          Cancelar
+        </button>
+        <button onclick="saveEmployee()" class="px-4 py-2 bg-indigo-600 rounded-lg text-white hover:bg-indigo-700">
+          Salvar Funcionário
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Detalhes do Funcionário -->
+  <div id="employeeDetailsModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-3xl">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold" id="detailsEmployeeName">Detalhes do Funcionário</h2>
+          <button onclick="closeEmployeeDetailsModal()" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Coluna de informações -->
+          <div class="lg:col-span-1 flex flex-col items-center">
+            <img src="/api/placeholder/120/120" alt="Foto" class="w-32 h-32 rounded-full mb-4" id="detailsEmployeePhoto">
+            <h3 class="text-lg font-medium" id="detailsEmployeeFullName">Nome do Funcionário</h3>
+            <p class="text-gray-500" id="detailsEmployeePosition">Cargo</p>
+            <div class="flex items-center mt-2">
+              <span class="inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+              <span class="ml-1 text-sm text-gray-500" id="detailsEmployeeStatus">Ativo</span>
+            </div>
+            
+            <div class="w-full mt-6 space-y-3">
+              <div>
+                <p class="text-xs text-gray-500">Email</p>
+                <p class="text-sm" id="detailsEmployeeEmail">email@exemplo.com</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Departamento</p>
+                <p class="text-sm" id="detailsEmployeeDept">Departamento</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Data de Admissão</p>
+                <p class="text-sm" id="detailsEmployeeHireDate">01/01/2024</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Tempo na Empresa</p>
+                <p class="text-sm" id="detailsEmployeeTime">5 meses</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Coluna de gráficos e indicadores -->
+          <div class="lg:col-span-2">
+            <div class="mb

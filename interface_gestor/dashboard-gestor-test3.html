@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GestãoRH - Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .sidebar {
+      transition: all 0.3s ease;
+    }
+    
+    .sidebar-collapsed {
+      width: 80px;
+    }
+    
+    .sidebar-collapsed .sidebar-text {
+      display: none;
+    }
+    
+    .sidebar-collapsed .sidebar-icon {
+      margin-right: 0;
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    
+    canvas {
+      transition: none !important;
+      transform: none !important;
+    }
+    
+    .progress-ring__circle {
+      transition: stroke-dashoffset 0.5s;
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+    }
+    
+    .page {
+      display: none;
+    }
+    
+    .page-active {
+      display: block;
+    }
+    
+    .nav-link.active {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-left: 3px solid white;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <div class="sidebar bg-indigo-800 text-white flex flex-col">
+      <div class="p-4 flex items-center justify-between border-b border-indigo-700">
+        <div class="flex items-center">
+          <i class="fas fa-chart-line text-xl sidebar-icon mr-3"></i>
+          <span class="sidebar-text font-bold text-lg">GestãoRH</span>
+        </div>
+        <button id="toggleSidebar" class="text-white focus:outline-none">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      
+      <nav class="flex-1 p-4 space-y-2">
+        <a href="#" data-page="dashboard" class="flex items-center p-2 rounded-lg nav-link active">
+          <i class="fas fa-tachometer-alt sidebar-icon mr-3"></i>
+          <span class="sidebar-text">Dashboard</span>
+        </a>
+        <a href="#" data-page="employees" class="flex items-center p-2 rounded-lg hover:bg-indigo-700 nav-link">
+          <i class="fas fa-users sidebar-icon mr-3"></i>
+          <span class="sidebar-text">Funcionários</span>
+        </a>
+        <a href="#" data-page="settings" class="flex items-center p-2 rounded-lg hover:bg-indigo-700 nav-link">
+          <i class="fas fa-cog sidebar-icon mr-3"></i>
+          <span class="sidebar-text">Configurações</span>
+        </a>
+      </nav>
+      
+      <div class="p-4 border-t border-indigo-700">
+        <div class="flex items-center">
+          <img src="https://via.placeholder.com/40" alt="Avatar" class="rounded-full w-10 h-10">
+          <div class="ml-3 sidebar-text">
+            <div class="font-medium">Gestor</div>
+            <div class="text-xs text-indigo-300">Administrador</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- Header -->
+      <header class="bg-white shadow-sm">
+        <div class="flex items-center justify-between p-4">
+          <h1 id="pageTitle" class="text-2xl font-bold text-gray-800">Dashboard do Gestor</h1>
+          <div class="flex items-center space-x-4">
+            <div class="relative">
+              <i class="fas fa-bell text-gray-500 hover:text-indigo-600 cursor-pointer"></i>
+              <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+            </div>
+            <div class="relative">
+              <input type="text" placeholder="Pesquisar..." class="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Páginas -->
+      <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page page-active">
+          <!-- Cards Resumo -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover transition-all duration-300">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-500">Total Funcionários</p>
+                  <h3 class="text-2xl font-bold">42</h3>
+                </div>
+                <div class="bg-indigo-100 p-3 rounded-full">
+                  <i class="fas fa-users text-indigo-600 text-xl"></i>
+                </div>
+              </div>
+              <div class="mt-4">
+                <div class="flex items-center text-sm text-green-500">
+                  <i class="fas fa-arrow-up mr-1"></i>
+                  <span>5% desde o último mês</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover transition-all duration-300">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-500">Metas Concluídas</p>
+                  <h3 class="text-2xl font-bold">78%</h3>
+                </div>
+                <div class="bg-green-100 p-3 rounded-full">
+                  <i class="fas fa-bullseye text-green-600 text-xl"></i>
+                </div>
+              </div>
+              <div class="mt-4">
+                <div class="flex items-center text-sm text-green-500">
+                  <i class="fas fa-arrow-up mr-1"></i>
+                  <span>12% desde o último mês</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover transition-all duration-300">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-500">Treinamentos</p>
+                  <h3 class="text-2xl font-bold">24</h3>
+                </div>
+                <div class="bg-blue-100 p-3 rounded-full">
+                  <i class="fas fa-graduation-cap text-blue-600 text-xl"></i>
+                </div>
+              </div>
+              <div class="mt-4">
+                <div class="flex items-center text-sm text-red-500">
+                  <i class="fas fa-arrow-down mr-1"></i>
+                  <span>2 desde o último mês</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover transition-all duration-300">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-500">Satisfação</p>
+                  <h3 class="text-2xl font-bold">89%</h3>
+                </div>
+                <div class="bg-yellow-100 p-3 rounded-full">
+                  <i class="fas fa-smile text-yellow-600 text-xl"></i>
+                </div>
+              </div>
+              <div class="mt-4">
+                <div class="flex items-center text-sm text-green-500">
+                  <i class="fas fa-arrow-up mr-1"></i>
+                  <span>3% desde o último mês</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gráfico Principal -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <div class="bg-white rounded-xl shadow-md p-6 lg:col-span-2">
+              <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold">Desempenho da Equipe</h2>
+                <select class="border rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  <option>Últimos 7 dias</option>
+                  <option>Últimos 30 dias</option>
+                  <option selected>Últimos 90 dias</option>
+                  <option>Este ano</option>
+                </select>
+              </div>
+              <canvas id="teamPerformanceChart" height="250"></canvas>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <h2 class="text-lg font-semibold mb-4">Distribuição de Cargos</h2>
+              <canvas id="rolesDistributionChart" height="250"></canvas>
+            </div>
+          </div>
+
+          <!-- Ferramentas e Lista de Funcionários -->
+          <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+              <h2 class="text-lg font-semibold">Funcionários Recentes</h2>
+              <div class="flex space-x-2 mt-3 sm:mt-0">
+                <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center" onclick="showMassAssignmentForm()">
+                  <i class="fas fa-bullseye mr-2"></i> Atribuir Metas
+                </button>
+                <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center" onclick="showCourseAssignmentForm()">
+                  <i class="fas fa-graduation-cap mr-2"></i> Atribuir Cursos
+                </button>
+              </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Funcionário</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cargo</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progresso</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200" id="employeeTableBody">
+                  <!-- Dados serão inseridos via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="flex justify-between items-center mt-4">
+              <div class="text-sm text-gray-500">
+                Mostrando <span id="startItem">1</span> a <span id="endItem">5</span> de <span id="totalItems">10</span> resultados
+              </div>
+              <div class="flex space-x-1">
+                <button class="px-3 py-1 border rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="px-3 py-1 border rounded-lg bg-indigo-600 text-white">1</button>
+                <button class="px-3 py-1 border rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200">2</button>
+                <button class="px-3 py-1 border rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200">3</button>
+                <button class="px-3 py-1 border rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Página de Funcionários -->
+        <div id="employees" class="page">
+          <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+              <h2 class="text-2xl font-semibold">Gestão de Funcionários</h2>
+              <div class="flex space-x-2 mt-3 sm:mt-0">
+                <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center" onclick="showAddEmployeeForm()">
+                  <i class="fas fa-plus mr-2"></i> Adicionar
+                </button>
+                <div class="relative">
+                  <select class="border rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none">
+                    <option>Todos Departamentos</option>
+                    <option>TI</option>
+                    <option>Marketing</option>
+                    <option>Vendas</option>
+                    <option>RH</option>
+                  </select>
+                  <i class="fas fa-chevron-down absolute right-3 top-3 text-gray-400 pointer-events-none"></i>
+                </div>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="employeeCardsContainer">
+              <!-- Cards de funcionários serão inseridos aqui via JavaScript -->
+            </div>
+            
+            <div class="flex justify-between items-center mt-6">
+              <div class="text-sm text-gray-500">
+                Mostrando <span id="empStartItem">1</span> a <span id="empEndItem">6</span> de <span id="empTotalItems">12</span> resultados
+              </div>
+              <div class="flex space-x-1">
+                <button class="px-3 py-1 border rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="px-3 py-1 border rounded-lg bg-indigo-600 text-white">1</button>
+                <button class="px-3 py-1 border rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200">2</button>
+                <button class="px-3 py-1 border rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Página de Configurações -->
+        <div id="settings" class="page">
+          <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+            <h2 class="text-2xl font-semibold mb-6">Configurações</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <!-- Perfil do Usuário -->
+              <div class="lg:col-span-1">
+                <div class="bg-gray-50 rounded-lg p-6">
+                  <div class="flex flex-col items-center">
+                    <img src="https://via.placeholder.com/150" alt="Avatar" class="rounded-full w-24 h-24 mb-4">
+                    <h3 class="text-xl font-semibold">Gestor Admin</h3>
+                    <p class="text-gray-500 mb-4">admin@empresa.com</p>
+                    <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                      <i class="fas fa-camera mr-1"></i> Alterar Foto
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Formulário de Edição -->
+              <div class="lg:col-span-2">
+                <form>
+                  <div class="space-y-4">
+                    <div>
+                      <h3 class="text-lg font-medium mb-4">Informações Pessoais</h3>
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label class="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+                          <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" value="Gestor Admin">
+                        </div>
+                        <div>
+                          <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                          <input type="email" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" value="admin@empresa.com">
+                        </div>
+                        <div>
+                          <label class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+                          <input type="tel" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" value="(11) 99999-9999">
+                        </div>
+                        <div>
+                          <label class="block text-sm font-medium text-gray-700 mb-1">Cargo</label>
+                          <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" value="Gerente de RH">
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-gray-200">
+                      <h3 class="text-lg font-medium mb-4">Segurança</h3>
+                      <div class="space-y-4">
+                        <div>
+                          <label class="block text-sm font-medium text-gray-700 mb-1">Senha Atual</label>
+                          <input type="password" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Digite sua senha atual">
+                        </div>
+                        <div>
+                          <label class="block text-sm font-medium text-gray-700 mb-1">Nova Senha</label>
+                          <input type="password" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Digite a nova senha">
+                        </div>
+                        <div>
+                          <label class="block text-sm font-medium text-gray-700 mb-1">Confirmar Nova Senha</label>
+                          <input type="password" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Confirme a nova senha">
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-gray-200">
+                      <h3 class="text-lg font-medium mb-4">Preferências</h3>
+                      <div class="space-y-3">
+                        <div class="flex items-center">
+                          <input type="checkbox" id="notifications" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" checked>
+                          <label for="notifications" class="ml-2 block text-sm text-gray-700">Receber notificações por email</label>
+                        </div>
+                        <div class="flex items-center">
+                          <input type="checkbox" id="darkMode" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                          <label for="darkMode" class="ml-2 block text-sm text-gray-700">Modo escuro</label>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="flex justify-end pt-4">
+                      <button type="button" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 mr-3">
+                        Cancelar
+                      </button>
+                      <button type="submit" class="px-4 py-2 bg-indigo-600 rounded-lg text-white hover:bg-indigo-700">
+                        Salvar Alterações
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal para Atribuição de Metas em Massa -->
+  <div id="massAssignmentForm" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-md">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold">Atribuir Metas em Massa</h2>
+          <button onclick="closeMassAssignmentForm()" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Meta</label>
+            <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Digite a meta">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+            <textarea class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" rows="3" placeholder="Descreva a meta..."></textarea>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Prazo</label>
+            <input type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Departamento</label>
+            <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option>Todos</option>
+              <option>TI</option>
+              <option>Marketing</option>
+              <option>Vendas</option>
+              <option>RH</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Prioridade</label>
+            <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option>Normal</option>
+              <option>Alta</option>
+              <option>Urgente</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-gray-50 px-6 py-3 rounded-b-xl flex justify-end space-x-3">
+        <button onclick="closeMassAssignmentForm()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100">
+          Cancelar
+        </button>
+        <button onclick="submitMassAssignment()" class="px-4 py-2 bg-indigo-600 rounded-lg text-white hover:bg-indigo-700">
+          Atribuir Metas
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Atribuição de Cursos -->
+  <div id="courseAssignmentForm" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-md">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold">Atribuir Cursos</h2>
+          <button onclick="closeCourseAssignmentForm()" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Curso</label>
+            <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option>Selecione um curso</option>
+              <option>Introdução ao Marketing Digital</option>
+              <option>Gestão de Projetos Ágeis</option>
+              <option>Programação em Python</option>
+              <option>Atendimento ao Cliente</option>
+              <option>Liderança e Gestão de Equipes</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+            <textarea class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" rows="3" placeholder="Descreva o curso..."></textarea>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Prazo para conclusão</label>
+            <input type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Departamento</label>
+            <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option>Todos</option>
+              <option>TI</option>
+              <option>Marketing</option>
+              <option>Vendas</option>
+              <option>RH</option>
+            </select>
+          </div>
+          
+          <div class="flex items-center">
+            <input type="checkbox" id="sendNotification" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" checked>
+            <label for="sendNotification" class="ml-2 block text-sm text-gray-700">Enviar notificação por e-mail</label>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-gray-50 px-6 py-3 rounded-b-xl flex justify-end space-x-3">
+        <button onclick="closeCourseAssignmentForm()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100">
+          Cancelar
+        </button>
+        <button onclick="submitCourseAssignment()" class="px-4 py-2 bg-green-600 rounded-lg text-white hover:bg-green-700">
+          Atribuir Cursos
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Adicionar Funcionário -->
+  <div id="addEmployeeForm" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-md">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold">Adicionar Funcionário</h2>
+          <button onclick="closeAddEmployeeForm()" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
+            <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Digite o nome">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input type="email" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Digite o email">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Cargo</label>
+            <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Digite o cargo">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Departamento</label>
+            <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option>Selecione um departamento</option>
+              <option>TI</option>
+              <option>Marketing</option>
+              <option>Vendas</option>
+              <option>RH</option>
+              <option>Financeiro</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Data de Admissão</label>
+            <input type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-gray-50 px-6 py-3 rounded-b-xl flex justify-end space-x-3">
+        <button onclick="closeAddEmployeeForm()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100">
+          Cancelar
+        </button>
+        <button onclick="submitAddEmployee()" class="px-4 py-2 bg-indigo-600 rounded-lg text-white hover:bg-indigo-700">
+          Adicionar Funcionário
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Detalhes do Funcionário -->
+  <div id="employeeDetailsModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-4xl">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-bold" id="employeeModalTitle">Detalhes do Funcionário</h2>
+          <button onclick="closeEmployeeDetailsModal()" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Informações do Funcionário -->
+          <div class="lg:col-span-1">
+            <div class="bg-gray-50 rounded-lg p-6">
+              <div class="flex flex-col items-center mb-4">
+                <img id="employeeModalPhoto" src="https://via.placeholder.com/150" alt="Avatar" class="rounded-full w-24 h-24 mb-4">
+                <h3 class="text-xl font-semibold" id="employeeModalName">Maria Silva</h3>
+                <p class="text-gray-500" id="employeeModalRole">Analista de Marketing</p>
+              </div>
+              
+              <div class="space-y-3">
+                <div>
+                  <p class="text-sm text-gray-500">Departamento</p>
+                  <p class="font-medium" id="employeeModalDept">Marketing</p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500">Email</p>
+                  <p class="font-medium" id="employeeModalEmail">maria.silva@empresa.com</p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500">Data de Admissão</p>
+                  <p class="font-medium" id="employeeModalHireDate">15/03/2020</p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500">Status</p>
+                  <p class="font-medium">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800" id="employeeModalStatus">Ativo</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Metas e Treinamentos -->
+          <div class="lg:col-span-2">
+            <div class="space-y-6">
+              <!-- Abas -->
+              <div class="border-b border-gray-200">
+                <nav class="-mb-px flex space-x-8">
+                  <button onclick="showEmployeeTab('goals')" class="employee-tab active border-indigo-500 text-indigo-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                    Metas
+                  </button>
+                  <button onclick="showEmployeeTab('trainings')" class="employee-tab border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                    Treinamentos
+                  </button>
+                  <button onclick="showEmployeeTab('evaluations')" class="employee-tab border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                    Avaliações
+                  </button>
+                </nav>
+              </div>
+              
+              <!-- Conteúdo das Abas -->
+              <div id="goalsTab" class="employee-tab-content">
+                <div class="flex justify-between items-center mb-4">
+                  <h3 class="text-lg font-medium">Metas Atribuídas</h3>
+                  <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center">
+                    <i class="fas fa-plus mr-1"></i> Nova Meta
+                  </button>
+                </div>
+                
+                <div class="space-y-4">
+                  <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex justify-between items-start">
+                      <div>
+                        <h4 class="font-medium">Aumentar engajamento nas redes sociais</h4>
+                        <p class="text-sm text-gray-500 mt-1">Aumentar o engajamento em 25% até o final do trimestre</p>
+                      </div>
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Em Andamento</span>
+                    </div>
+                    <div class="mt-3">
+                      <div class="flex justify-between text-sm text-gray-500 mb-1">
+                        <span>Progresso</span>
+                        <span>65%</span>
+                      </div>
+                      <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-blue-500 h-2 rounded-full" style="width: 65%"></div>
+                      </div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-sm text-gray-500">
+                      <span>Prazo: 30/06/2023</span>
+                      <span>Prioridade: Alta</span>
+                    </div>
+                  </div>
+                  
+                  <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex justify-between items-start">
+                      <div>
+                        <h4 class="font-medium">Lançar campanha de verão</h4>
+                        <p class="text-sm text-gray-500 mt-1">Desenvolver e implementar campanha de marketing para o verão</p>
+                      </div>
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Concluído</span>
+                    </div>
+                    <div class="mt-3">
+                      <div class="flex justify-between text-sm text-gray-500 mb-1">
+                        <span>Progresso</span>
+                        <span>100%</span>
+                      </div>
+                      <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-green-500 h-2 rounded-full" style="width: 100%"></div>
+                      </div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-sm text-gray-500">
+                      <span>Concluído em: 15/05/2023</span>
+                      <span>Prioridade: Normal</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div id="trainingsTab" class="employee-tab-content hidden">
+                <div class="flex justify-between items-center mb-4">
+                  <h3 class="text-lg font-medium">Treinamentos Atribuídos</h3>
+                  <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center">
+                    <i class="fas fa-plus mr-1"></i> Novo Treinamento
+                  </button>
+                </div>
+                
+                <div class="space-y-4">
+                  <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex justify-between items-start">
+                      <div>
+                        <h4 class="font-medium">Marketing Digital Avançado</h4>
+                        <p class="text-sm text-gray-500 mt-1">Curso avançado de estratégias de marketing digital</p>
+                      </div>
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Em Andamento</span>
+                    </div>
+                    <div class="mt-3">
+                      <div class="flex justify-between text-sm text-gray-500 mb-1">
+                        <span>Progresso</span>
+                        <span>45%</span>
+                      </div>
+                      <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-blue-500 h-2 rounded-full" style="width: 45%"></div>
+                      </div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-sm text-gray-500">
+                      <span>Prazo: 15/08/2023</span>
+                      <span>Carga Horária: 20h</span>
+                    </div>
+                  </div>
+                  
+                  <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex justify-between items-start">
+                      <div>
+                        <h4 class="font-medium">Gestão de Mídias Sociais</h4>
+                        <p class="text-sm text-gray-500 mt-1">Estratégias avançadas para gestão de redes sociais</p>
+                      </div>
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Concluído</span>
+                    </div>
+                    <div class="mt-3">
+                      <div class="flex justify-between text-sm text-gray-500 mb-1">
+                        <span>Progresso</span>
+                        <span>100%</span>
+                      </div>
+                      <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-green-500 h-2 rounded-full" style="width: 100%"></div>
+                      </div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-sm text-gray-500">
+                      <span>Concluído em: 10/04/2023</span>
+                      <span>Carga Horária: 15h</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div id="evaluationsTab" class="employee-tab-content hidden">
+                <div class="flex justify-between items-center mb-4">
+                  <h3 class="text-lg font-medium">Avaliações</h3>
+                  <button onclick="showEvaluationForm()" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center">
+                    <i class="fas fa-plus mr-1"></i> Nova Avaliação
+                  </button>
+                </div>
+                
+                <div class="space-y-4">
+                  <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex justify-between items-start">
+                      <div>
+                        <h4 class="font-medium">Avaliação Trimestral</h4>
+                        <p class="text-sm text-gray-500 mt-1">Avaliação de desempenho do primeiro trimestre</p>
+                      </div>
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">8.5/10</span>
+                    </div>
+                    <div class="mt-3">
+                      <p class="text-sm text-gray-700">"Excelente desempenho no lançamento da última campanha. Mostrou grande capacidade de trabalho em equipe e criatividade."</p>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-500">
+                      <span>Avaliado em: 05/04/2023 por João Gerente</span>
+                    </div>
+                  </div>
+                  
+                  <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex justify-between items-start">
+                      <div>
+                        <h4 class="font-medium">Avaliação de Habilidades</h4>
+                        <p class="text-sm text-gray-500 mt-1">Avaliação de habilidades técnicas</p>
+                      </div>
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">7.2/10</span>
+                    </div>
+                    <div class="mt-3">
+                      <p class="text-sm text-gray-700">"Bom domínio das ferramentas básicas, recomendo treinamento avançado em análise de métricas para o próximo ciclo."</p>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-500">
+                      <span>Avaliado em: 15/12/2022 por Ana Coordenadora</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Avaliação -->
+  <div id="evaluationForm" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-md">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold">Avaliar Funcionário</h2>
+          <button onclick="closeEvaluationForm()" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Funcionário</label>
+            <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option>Selecione um funcionário</option>
+              <option>Maria Silva</option>
+              <option>João Souza</option>
+              <option>Ana Oliveira</option>
+              <option>Carlos Pereira</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Avaliação</label>
+            <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option>Desempenho</option>
+              <option>Habilidades Técnicas</option>
+              <option>Comportamento</option>
+              <option>Metas</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nota (1-10)</label>
+            <input type="range" min="1" max="10" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+            <div class="flex justify-between text-xs text-gray-500">
+              <span>1</span>
+              <span>2</span>
+              <span>3</span>
+              <span>4</span>
+              <span>5</span>
+              <span>6</span>
+              <span>7</span>
+              <span>8</span>
+              <span>9</span>
+              <span>10</span>
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Comentários</label>
+            <textarea class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" rows="3" placeholder="Adicione seus comentários..."></textarea>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-gray-50 px-6 py-3 rounded-b-xl flex justify-end space-x-3">
+        <button onclick="closeEvaluationForm()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100">
+          Cancelar
+        </button>
+        <button onclick="submitEvaluation()" class="px-4 py-2 bg-blue-600 rounded-lg text-white hover:bg-blue-700">
+          Salvar Avaliação
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Dados dos funcionários
+    const employees = [
+      {
+        id: 1,
+        nome: 'Maria Silva',
+        cargo: 'Analista de Marketing',
+        departamento: 'Marketing',
+        email: 'maria.silva@empresa.com',
+        admissao: '2020-03-15',
+        progresso: 75,
+        status: 'ativo',
+        foto: 'https://randomuser.me/api/portraits/women/44.jpg',
+        metas: [
+          {
+            titulo: 'Aumentar engajamento nas redes sociais',
+            descricao: 'Aumentar o engajamento em 25% até o final do trimestre',
+            progresso: 65,
+            prazo: '2023-06-30',
+            status: 'Em Andamento',
+            prioridade: 'Alta'
+          },
+          {
+            titulo: 'Lançar campanha de verão',
+            descricao: 'Desenvolver e implementar campanha de marketing para o verão',
+            progresso: 100,
+            conclusao: '2023-05-15',
+            status: 'Concluído',
+            prioridade: 'Normal'
+          }
+        ],
+        treinamentos: [
+          {
+            titulo: 'Marketing Digital Avançado',
+            descricao: 'Curso avançado de estratégias de marketing digital',
+            progresso: 45,
+            prazo: '2023-08-15',
+            cargaHoraria: '20h',
+            status: 'Em Andamento'
+          },
+          {
+            titulo: 'Gestão de Mídias Sociais',
+            descricao: 'Estratégias avançadas para gestão de redes sociais',
+            progresso: 100,
+            conclusao: '2023-04-10',
+            cargaHoraria: '15h',
+            status: 'Concluído'
+          }
+        ],
+        avaliacoes: [
+          {
+            tipo: 'Desempenho',
+            titulo: 'Avaliação Trimestral',
+            descricao: 'Avaliação de desempenho do primeiro trimestre',
+            nota: 8.5,
+            comentario: 'Excelente desempenho no lançamento da última campanha. Mostrou grande capacidade de trabalho em equipe e criatividade.',
+            avaliador: 'João Gerente',
+            data: '2023-04-05'
+          },
+          {
+            tipo: 'Habilidades',
+            titulo: 'Avaliação de Habilidades',
+            descricao: 'Avaliação de habilidades técnicas',
+            nota: 7.2,
+            comentario: 'Bom domínio das ferramentas básicas, recomendo treinamento avançado em análise de métricas para o próximo ciclo.',
+            avaliador: 'Ana Coordenadora',
+            data: '2022-12-15'
+          }
+        ]
+      },
+      {
+        id: 2,
+        nome: 'João Souza',
+        cargo: 'Desenvolvedor Front-end',
+        departamento: 'TI',
+        email: 'joao.souza@empresa.com',
+        admissao: '2019-07-22',
+        progresso: 50,
+        status: 'ativo',
+        foto: 'https://randomuser.me/api/portraits/men/32.jpg',
+        metas: [
+          {
+            titulo: 'Implementar novo layout',
+            descricao: 'Desenvolver e implementar novo layout para o site principal',
+            progresso: 80,
+            prazo: '2023-07-10',
+            status: 'Em Andamento',
+            prioridade: 'Alta'
+          }
+        ],
+        treinamentos: [
+          {
+            titulo: 'React Avançado',
+            descricao: 'Padrões avançados e performance em React',
+            progresso: 30,
+            prazo: '2023-09-20',
+            cargaHoraria: '30h',
+            status: 'Em Andamento'
+          }
+        ],
+        avaliacoes: [
+          {
+            tipo: 'Desempenho',
+            titulo: 'Avaliação Semestral',
+            descricao: 'Avaliação de desempenho do primeiro semestre',
+            nota: 9.0,
+            comentario: 'Excelente desenvolvedor, sempre entrega além do esperado. Recomendo para projetos desafiadores.',
+            avaliador: 'Carlos Tech Lead',
+            data: '2023-06-15'
+          }
+        ]
+      },
+      {
+        id: 3,
+        nome: 'Ana Oliveira',
+        cargo: 'Gerente de Vendas',
+        departamento: 'Vendas',
+        email: 'ana.oliveira@empresa.com',
+        admissao: '2018-11-05',
+        progresso: 90,
+        status: 'ativo',
+        foto: 'https://randomuser.me/api/portraits/women/68.jpg',
+        metas: [
+          {
+            titulo: 'Aumentar vendas em 20%',
+            descricao: 'Atingir meta de aumento de vendas no segundo trimestre',
+            progresso: 95,
+            prazo: '2023-06-30',
+            status: 'Em Andamento',
+            prioridade: 'Urgente'
+          }
+        ],
+        treinamentos: [],
+        avaliacoes: [
+          {
+            tipo: 'Liderança',
+            titulo: 'Avaliação de Liderança',
+            descricao: 'Avaliação de habilidades de gestão de equipe',
+            nota: 9.5,
+            comentario: 'Liderança excepcional, equipe altamente motivada e resultados acima da média.',
+            avaliador: 'Diretor Comercial',
+            data: '2023-03-10'
+          }
+        ]
+      },
+      {
+        id: 4,
+        nome: 'Carlos Pereira',
+        cargo: 'Analista de RH',
+        departamento: 'RH',
+        email: 'carlos.pereira@empresa.com',
+        admissao: '2021-02-18',
+        progresso: 65,
+        status: 'ativo',
+        foto: 'https://randomuser.me/api/portraits/men/75.jpg',
+        metas: [
+          {
+            titulo: 'Processo seletivo para TI',
+            descricao: 'Concluir processo seletivo para 5 vagas em TI',
+            progresso: 40,
+            prazo: '2023-07-15',
+            status: 'Em Andamento',
+            prioridade: 'Alta'
+          }
+        ],
+        treinamentos: [
+          {
+            titulo: 'Recrutamento Ágil',
+            descricao: 'Técnicas modernas de recrutamento e seleção',
+            progresso: 100,
+            conclusao: '2023-03-20',
+            cargaHoraria: '15h',
+            status: 'Concluído'
+          }
+        ],
+        avaliacoes: []
+      },
+      {
+        id: 5,
+        nome: 'Fernanda Costa',
+        cargo: 'Designer UX/UI',
+        departamento: 'TI',
+        email: 'fernanda.costa@empresa.com',
+        admissao: '2022-01-10',
+        progresso: 80,
+        status: 'ativo',
+        foto: 'https://randomuser.me/api/portraits/women/63.jpg',
+        metas: [
+          {
+            titulo: 'Novo design system',
+            descricao: 'Criar e documentar design system para produtos digitais',
+            progresso: 60,
+            prazo: '2023-08-01',
+            status: 'Em Andamento',
+            prioridade: 'Alta'
+          }
+        ],
+        treinamentos: [
+          {
+            titulo: 'Acessibilidade Digital',
+            descricao: 'Princípios de design acessível',
+            progresso: 100,
+            conclusao: '2023-02-28',
+            cargaHoraria: '10h',
+            status: 'Concluído'
+          }
+        ],
+        avaliacoes: [
+          {
+            tipo: 'Habilidades',
+            titulo: 'Avaliação de Portfólio',
+            descricao: 'Análise de projetos recentes',
+            nota: 8.8,
+            comentario: 'Ótimo senso estético e atenção aos detalhes. Continue evoluindo nas pesquisas com usuários.',
+            avaliador: 'Líder de Design',
+            data: '2023-05-20'
+          }
+        ]
+      }
+    ];
+
+    // Inicializar tabela de funcionários no dashboard
+    function initEmployeeTable() {
+      const tableBody = document.getElementById('employeeTableBody');
+      tableBody.innerHTML = '';
+      
+      employees.slice(0, 5).forEach(emp => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-50';
+        
+        // Progresso em formato de círculo
+        const progressRing = `
+          <svg class="w-8 h-8" viewBox="0 0 36 36">
+            <circle cx="18" cy="18" r="16" fill="none" class="stroke-gray-200" stroke-width="2"></circle>
+            <circle cx="18" cy="18" r="16" fill="none" class="stroke-green-500" stroke-width="2"
+              stroke-dasharray="100"
+              stroke-dashoffset="${100 - emp.progresso}">
+            </circle>
+            <text x="18" y="20" text-anchor="middle" class="text-xs font-bold">${emp.progresso}%</text>
+          </svg>
+        `;
+        
+        // Status badge
+        let statusClass, statusText;
+        if (emp.status === 'ativo') {
+          statusClass = 'bg-green-100 text-green-800';
+          statusText = 'Ativo';
+        } else {
+          statusClass = 'bg-red-100 text-red-800';
+          statusText = 'Inativo';
+        }
+        
+        row.innerHTML = `
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-10 w-10">
+                <img class="h-10 w-10 rounded-full" src="${emp.foto}" alt="${emp.nome}">
+              </div>
+              <div class="ml-4">
+                <div class="text-sm font-medium text-gray-900">${emp.nome}</div>
+                <div class="text-sm text-gray-500">${emp.departamento}</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">${emp.cargo}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              ${progressRing}
+              <div class="ml-2 w-20">
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="bg-green-500 h-2 rounded-full" style="width: ${emp.progresso}%"></div>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">
+              ${statusText}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <button onclick="showEmployeeDetails(${emp.id})" class="text-indigo-600 hover:text-indigo-900 mr-3">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button onclick="editEmployee(${emp.id})" class="text-blue-600 hover:text-blue-900 mr-3">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button onclick="deleteEmployee(${emp.id})" class="text-red-600 hover:text-red-900">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+        `;
+        
+        tableBody.appendChild(row);
+      });
+      
+      // Atualizar contadores de paginação
+      document.getElementById('startItem').textContent = '1';
+      document.getElementById('endItem').textContent = '5';
+      document.getElementById('totalItems').textContent = employees.length;
+    }
+    
+    // Inicializar cards de funcionários na página de funcionários
+    function initEmployeeCards() {
+      const container = document.getElementById('employeeCardsContainer');
+      container.innerHTML = '';
+      
+      employees.forEach(emp => {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300';
+        card.innerHTML = `
+          <div class="p-6">
+            <div class="flex items-center mb-4">
+              <img class="h-16 w-16 rounded-full object-cover mr-4" src="${emp.foto}" alt="${emp.nome}">
+              <div>
+                <h3 class="text-lg font-semibold">${emp.nome}</h3>
+                <p class="text-sm text-gray-500">${emp.cargo}</p>
+                <span class="text-xs px-2 py-1 rounded-full ${emp.status === 'ativo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                  ${emp.status === 'ativo' ? 'Ativo' : 'Inativo'}
+                </span>
+              </div>
+            </div>
+            
+            <div class="mb-4">
+              <div class="flex justify-between text-sm text-gray-500 mb-1">
+                <span>Progresso</span>
+                <span>${emp.progresso}%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-green-500 h-2 rounded-full" style="width: ${emp.progresso}%"></div>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-2 text-sm mb-4">
+              <div>
+                <p class="text-gray-500">Departamento</p>
+                <p>${emp.departamento}</p>
+              </div>
+              <div>
+                <p class="text-gray-500">Email</p>
+                <p class="truncate">${emp.email}</p>
+              </div>
+            </div>
+            
+            <div class="flex space-x-2">
+              <button onclick="showEmployeeDetails(${emp.id})" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg text-sm">
+                <i class="fas fa-eye mr-1"></i> Detalhes
+              </button>
+              <button onclick="editEmployee(${emp.id})" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm">
+                <i class="fas fa-edit"></i>
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      
+      // Atualizar contadores de paginação
+      document.getElementById('empStartItem').textContent = '1';
+      document.getElementById('empEndItem').textContent = employees.length;
+      document.getElementById('empTotalItems').textContent = employees.length;
+    }
+    
+    // Inicializar gráficos
+    function initCharts() {
+      // Gráfico de desempenho da equipe
+      const teamPerformanceCtx = document.getElementById('teamPerformanceChart').getContext('2d');
+      new Chart(teamPerformanceCtx, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul'],
+          datasets: [
+            {
+              label: 'Desempenho',
+              data: [65, 59, 80, 81, 76, 85, 90],
+              borderColor: '#4f46e5',
+              backgroundColor: 'rgba(79, 70, 229, 0.1)',
+              fill: true,
+              tension: 0.3
+            },
+            {
+              label: 'Meta',
+              data: [70, 70, 70, 75, 80, 85, 85],
+              borderColor: '#10b981',
+              borderDash: [5, 5],
+              backgroundColor: 'transparent',
+              tension: 0.1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: false,
+              min: 50,
+              max: 100
+            }
+          }
+        }
+      });
+      
+      // Gráfico de distribuição de cargos
+      const rolesDistributionCtx = document.getElementById('rolesDistributionChart').getContext('2d');
+      new Chart(rolesDistributionCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['TI', 'Marketing', 'Vendas', 'RH', 'Financeiro'],
+          datasets: [{
+            data: [12, 8, 15, 5, 2],
+            backgroundColor: [
+              '#4f46e5',
+              '#10b981',
+              '#f59e0b',
+              '#ef4444',
+              '#8b5cf6'
+            ],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'right',
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  let label = context.label || '';
+                  if (label) {
+                    label += ': ';
+                  }
+                  label += context.raw + ' funcionários';
+                  return label;
+                }
+              }
+            }
+          },
+          cutout: '70%'
+        }
+      });
+    }
+    
+    // Funções para navegação entre páginas
+    function setupPageNavigation() {
+      const links = document.querySelectorAll('[data-page]');
+      
+      links.forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          // Remover classe active de todos os links
+          links.forEach(l => l.classList.remove('active'));
+          // Adicionar classe active ao link clicado
+          this.classList.add('active');
+          
+          const pageId = this.getAttribute('data-page');
+          showPage(pageId);
+        });
+      });
+    }
+    
+    function showPage(pageId) {
+      // Esconder todas as páginas
+      document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('page-active');
+      });
+      
+      // Mostrar a página selecionada
+      document.getElementById(pageId).classList.add('page-active');
+      
+      // Atualizar título da página
+      const titles = {
+        'dashboard': 'Dashboard do Gestor',
+        'employees': 'Gestão de Funcionários',
+        'settings': 'Configurações'
+      };
+      document.getElementById('pageTitle').textContent = titles[pageId];
+      
+      // Inicializar componentes específicos da página se necessário
+      if (pageId === 'employees') {
+        initEmployeeCards();
+      }
+    }
+    
+    // Funções para os modais
+    function showMassAssignmentForm() {
+      document.getElementById('massAssignmentForm').classList.remove('hidden');
+    }
+    
+    function closeMassAssignmentForm() {
+      document.getElementById('massAssignmentForm').classList.add('hidden');
+    }
+    
+    function showCourseAssignmentForm() {
+      document.getElementById('courseAssignmentForm').classList.remove('hidden');
+    }
+    
+    function closeCourseAssignmentForm() {
+      document.getElementById('courseAssignmentForm').classList.add('hidden');
+    }
+    
+    function showEvaluationForm() {
+      document.getElementById('evaluationForm').classList.remove('hidden');
+    }
+    
+    function closeEvaluationForm() {
+      document.getElementById('evaluationForm').classList.add('hidden');
+    }
+    
+    function showAddEmployeeForm() {
+      document.getElementById('addEmployeeForm').classList.remove('hidden');
+    }
+    
+    function closeAddEmployeeForm() {
+      document.getElementById('addEmployeeForm').classList.add('hidden');
+    }
+    
+    function submitMassAssignment() {
+      alert('Metas atribuídas com sucesso!');
+      closeMassAssignmentForm();
+    }
+    
+    function submitCourseAssignment() {
+      alert('Cursos atribuídos com sucesso!');
+      closeCourseAssignmentForm();
+    }
+    
+    function submitEvaluation() {
+      alert('Avaliação salva com sucesso!');
+      closeEvaluationForm();
+    }
+    
+    function submitAddEmployee() {
+      alert('Funcionário adicionado com sucesso!');
+      closeAddEmployeeForm();
+    }
+    
+    // Funções para ações dos funcionários
+    function showEmployeeDetails(id) {
+      const employee = employees.find(emp => emp.id === id);
+      if (employee) {
+        // Preencher informações básicas
+        document.getElementById('employeeModalTitle').textContent = `Detalhes de ${employee.nome}`;
+        document.getElementById('employeeModalName').textContent = employee.nome;
+        document.getElementById('employeeModalRole').textContent = employee.cargo;
+        document.getElementById('employeeModalPhoto').src = employee.foto;
+        document.getElementById('employeeModalDept').textContent = employee.departamento;
+        document.getElementById('employeeModalEmail').textContent = employee.email;
+        
+        // Formatando data de admissão
+        const hireDate = new Date(employee.admissao);
+        document.getElementById('employeeModalHireDate').textContent = hireDate.toLocaleDateString('pt-BR');
+        
+        // Status
+        const statusBadge = document.getElementById('employeeModalStatus');
+        statusBadge.textContent = employee.status === 'ativo' ? 'Ativo' : 'Inativo';
+        statusBadge.className = `px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${employee.status === 'ativo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+        
+        // Mostrar modal
+        document.getElementById('employeeDetailsModal').classList.remove('hidden');
+        
+        // Ativar primeira aba
+        showEmployeeTab('goals');
+      }
+    }
+    
+    function closeEmployeeDetailsModal() {
+      document.getElementById('employeeDetailsModal').classList.add('hidden');
+    }
+    
+    function showEmployeeTab(tabName) {
+      // Esconder todos os conteúdos de abas
+      document.querySelectorAll('.employee-tab-content').forEach(tab => {
+        tab.classList.add('hidden');
+      });
+      
+      // Mostrar o conteúdo da aba selecionada
+      document.getElementById(`${tabName}Tab`).classList.remove('hidden');
+      
+      // Atualizar estado visual das abas
+      document.querySelectorAll('.employee-tab').forEach(tab => {
+        tab.classList.remove('active', 'border-indigo-500', 'text-indigo-600');
+        tab.classList.add('border-transparent', 'text-gray-500');
+      });
+      
+      // Ativar a aba clicada
+      const activeTab = document.querySelector(`.employee-tab[onclick="showEmployeeTab('${tabName}')"]`);
+      activeTab.classList.add('active', 'border-indigo-500', 'text-indigo-600');
+      activeTab.classList.remove('border-transparent', 'text-gray-500');
+    }
+    
+    function editEmployee(id) {
+      const employee = employees.find(emp => emp.id === id);
+      if (employee) {
+        showEmployeeDetails(id);
+      }
+    }
+    
+    function deleteEmployee(id) {
+      if (confirm('Tem certeza que deseja remover este funcionário?')) {
+        alert('Funcionário removido com sucesso!');
+      }
+    }
+    
+    // Toggle sidebar
+    document.getElementById('toggleSidebar').addEventListener('click', function() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-coll

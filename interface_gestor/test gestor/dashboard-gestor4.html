@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard do Gestor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    canvas {
+      transition: none !important;
+      transform: none !important;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans">
+  <!-- Header -->
+  <header class="bg-white shadow p-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-2xl font-bold">Dashboard do Gestor</h1>
+      <div class="flex items-center">
+        <img src="https://via.placeholder.com/40" alt="Avatar" class="rounded-full">
+        <span class="ml-2">Gestor</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container mx-auto mt-8 p-4">
+    <!-- Ferramentas no Topo -->
+    <div class="flex space-x-4 mb-6">
+      <button class="bg-blue-500 text-white px-4 py-2 rounded-md" onclick="showMassAssignmentForm()">Atribuir Metas em Massa</button>
+      <button class="bg-green-500 text-white px-4 py-2 rounded-md" onclick="showCourseAssignmentForm()">Atribuir Cursos</button>
+    </div>
+
+    <!-- Lista de Funcionários -->
+    <div class="space-y-4" id="employeeList"></div>
+  </div>
+
+  <!-- Formulário para Atribuição de Metas em Massa -->
+  <div id="massAssignmentForm" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+      <h2 class="text-xl font-bold mb-4">Atribuir Metas em Massa</h2>
+      <label class="block mb-2">Meta:</label>
+      <input type="text" class="border border-gray-300 p-2 w-full mb-4" placeholder="Digite a meta">
+      <div class="flex justify-end space-x-2">
+        <button class="bg-blue-500 text-white px-4 py-2 rounded-md" onclick="submitMassAssignment()">Atribuir</button>
+        <button class="bg-red-500 text-white px-4 py-2 rounded-md" onclick="closeMassAssignmentForm()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulário para Atribuição de Cursos -->
+  <div id="courseAssignmentForm" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+      <h2 class="text-xl font-bold mb-4">Atribuir Cursos</h2>
+      <label class="block mb-2">Curso:</label>
+      <input type="text" class="border border-gray-300 p-2 w-full mb-4" placeholder="Digite o nome do curso">
+      <div class="flex justify-end space-x-2">
+        <button class="bg-green-500 text-white px-4 py-2 rounded-md" onclick="submitCourseAssignment()">Atribuir</button>
+        <button class="bg-red-500 text-white px-4 py-2 rounded-md" onclick="closeCourseAssignmentForm()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript para Interatividade -->
+  <script>
+    const employees = [
+      {
+        nome: 'Maria Silva',
+        cargo: 'Analista',
+        progresso: 75,
+        metas: [80, 60, 90],
+        habilidades: [70, 30, 50]
+      },
+      {
+        nome: 'João Souza',
+        cargo: 'Desenvolvedor',
+        progresso: 50,
+        metas: [50, 40, 60],
+        habilidades: [40, 60, 20]
+      }
+    ];
+
+    const employeeList = document.getElementById('employeeList');
+
+    employees.forEach((emp, index) => {
+      const id = emp.nome.split(' ')[0];
+      const container = document.createElement('div');
+      container.className = 'bg-white p-4 rounded-lg shadow';
+      container.innerHTML = `
+        <div class="flex justify-between items-center">
+          <div>
+            <h3 class="font-semibold">${emp.nome}</h3>
+            <p class="text-sm text-gray-600">${emp.cargo}</p>
+          </div>
+          <span class="${emp.progresso >= 75 ? 'text-green-500' : emp.progresso >= 50 ? 'text-yellow-500' : 'text-red-500'}">${emp.progresso}% Concluído</span>
+        </div>
+        <div class="mt-2 hidden" id="details${id}">
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <h4 class="text-sm font-semibold mb-2">Metas Concluídas</h4>
+              <canvas id="chartMetas${id}" style="height:200px;"></canvas>
+            </div>
+            <div class="w-4/5">
+              <h4 class="text-sm font-semibold mb-2">Habilidades Concluídas</h4>
+              <div class="relative" style="height:160px;">
+                <canvas id="chartHabilidades${id}"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
+            <div class="bg-green-500 h-2 rounded-full" style="width: ${emp.progresso}%;"></div>
+          </div>
+        </div>
+        <button class="bg-gray-300 text-gray-700 px-4 py-1 rounded-md" onclick="toggleDetails('details${id}')">Detalhes</button>
+      `;
+      employeeList.appendChild(container);
+
+      setTimeout(() => {
+        new Chart(document.getElementById(`chartMetas${id}`), {
+          type: 'bar',
+          data: {
+            labels: ['Meta 1', 'Meta 2', 'Meta 3'],
+            datasets: [{
+              label: 'Conclusão',
+              data: emp.metas,
+              backgroundColor: ['#3b82f6', '#3b82f6', '#3b82f6']
+            }]
+          },
+          options: {
+            scales: { y: { beginAtZero: true, max: 100 } }
+          }
+        });
+
+        new Chart(document.getElementById(`chartHabilidades${id}`), {
+          type: 'pie',
+          data: {
+            labels: ['Habilidade 1', 'Habilidade 2', 'Habilidade 3'],
+            datasets: [{
+              label: 'Habilidades Concluídas',
+              data: emp.habilidades,
+              backgroundColor: ['#10b981', '#f59e0b', '#3b82f6']
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false
+          }
+        });
+      }, 0);
+    });
+
+    function toggleDetails(id) {
+      document.getElementById(id).classList.toggle('hidden');
+    }
+
+    function showMassAssignmentForm() {
+      document.getElementById('massAssignmentForm').classList.remove('hidden');
+    }
+
+    function closeMassAssignmentForm() {
+      document.getElementById('massAssignmentForm').classList.add('hidden');
+    }
+
+    function showCourseAssignmentForm() {
+      document.getElementById('courseAssignmentForm').classList.remove('hidden');
+    }
+
+    function closeCourseAssignmentForm() {
+      document.getElementById('courseAssignmentForm').classList.add('hidden');
+    }
+
+    function submitMassAssignment() {
+      alert('Metas em massa atribuídas!');
+      closeMassAssignmentForm();
+    }
+
+    function submitCourseAssignment() {
+      alert('Curso atribuído!');
+      closeCourseAssignmentForm();
+    }
+  </script>
+</body>
+</html>
