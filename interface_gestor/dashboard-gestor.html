@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GestãoRH - Dashboard</title>
+  <title>FacilitaRH - Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -67,7 +67,7 @@
       <div class="p-4 flex items-center justify-between border-b border-indigo-700">
         <div class="flex items-center">
           <i class="fas fa-chart-line text-xl sidebar-icon mr-3"></i>
-          <span class="sidebar-text font-bold text-lg">GestãoRH</span>
+          <span class="sidebar-text font-bold text-lg">FacilitaRH</span>
         </div>
         <button id="toggleSidebar" class="text-white focus:outline-none">
           <i class="fas fa-bars"></i>
@@ -1502,4 +1502,18 @@
     
     // Toggle sidebar
     document.getElementById('toggleSidebar').addEventListener('click', function() {
-      document.querySelector('.sidebar').classList.toggle('sidebar-coll
+      document.querySelector('.sidebar').classList.toggle('sidebar-collapsed');
+    });
+    
+    // Inicializar a página
+    document.addEventListener('DOMContentLoaded', function() {
+      initEmployeeTable();
+      initCharts();
+      setupPageNavigation();
+      
+      // Mostrar a página dashboard por padrão
+      showPage('dashboard');
+    });
+  </script>
+</body>
+</html>
