@@ -351,7 +351,7 @@
       <div id="habilidades" class="page">
         <!-- Formulário para Adicionar Habilidade -->
         <div class="bg-white p-6 rounded-lg shadow mb-8">
-          <h3 class="text-xl font-semibold mb-4">Adicionar Nova Habilidade</h3>
+          <h3 class="text-xl font-semibold mb-4" id="formTitle">Adicionar Nova Habilidade</h3>
           <form id="addSkillForm" class="space-y-4">
             <div>
               <label for="skillName" class="block text-sm font-medium text-gray-700">Nome da Habilidade</label>
@@ -380,8 +380,11 @@
               <label for="skillDescription" class="block text-sm font-medium text-gray-700">Descrição (opcional)</label>
               <textarea id="skillDescription" name="skillDescription" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" rows="3" placeholder="Descreva como você aplica esta habilidade..."></textarea>
             </div>
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300">
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300" id="submitButton">
               Adicionar Habilidade
+            </button>
+            <button type="button" onclick="cancelEdit()" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition duration-300 hidden" id="cancelButton">
+              Cancelar Edição
             </button>
           </form>
         </div>
@@ -585,7 +588,7 @@
   </div>
 
   <!-- Modal para Adicionar Meta -->
-  <div id="addGoalModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+  <div id="addGoalModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
     <div class="bg-white p-6 rounded-lg w-96">
       <h3 class="text-xl font-semibold mb-4">Adicionar Nova Meta</h3>
       <form id="addGoalForm" class="space-y-4">
@@ -610,7 +613,7 @@
   </div>
 
   <!-- Modal para Adicionar Mentoria -->
-  <div id="addMentoringModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+  <div id="addMentoringModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
     <div class="bg-white p-6 rounded-lg w-96">
       <h3 class="text-xl font-semibold mb-4">Adicionar Nova Mentoria</h3>
       <form id="addMentoringForm" class="space-y-4">
@@ -635,24 +638,21 @@
   </div>
 
   <script>
-    // Sistema de Navegação
+    // SISTEMA DE NAVEGAÇÃO
     function showPage(pageId) {
-      // Esconde todas as páginas
       document.querySelectorAll('.page').forEach(page => {
         page.classList.remove('page-active');
       });
-      
-      // Mostra a página selecionada
       document.getElementById(pageId).classList.add('page-active');
     }
 
-    // Função para expandir/colapsar os checklists
+    // FUNÇÃO PARA EXPANDIR/COLAPSAR
     function toggleCollapse(id) {
       const content = document.getElementById(id);
       content.classList.toggle('active');
     }
 
-    // Sistema de Habilidades (mantido do arquivo original)
+    // SISTEMA DE HABILIDADES COMPLETO
     let skills = [];
     let editIndex = null;
 
@@ -661,15 +661,25 @@
       const skillName = document.getElementById('skillName').value;
       const skillCategory = document.getElementById('skillCategory').value;
       const skillLevel = document.getElementById('skillLevel').value;
+      const skillDescription = document.getElementById('skillDescription').value;
 
       const newSkill = {
         name: skillName,
         category: skillCategory,
-        level: skillLevel
+        level: skillLevel,
+        description: skillDescription
       };
 
-      skills.push(newSkill);
+      if (editIndex === null) {
+        skills.push(newSkill);
+      } else {
+        skills[editIndex] = newSkill;
+        editIndex = null;
+        resetForm();
+      }
+
       renderSkills();
+      updateSkillsCount();
       document.getElementById('addSkillForm').reset();
     });
 
@@ -679,18 +689,21 @@
 
       skills.forEach((skill, index) => {
         const skillItem = document.createElement('div');
-        skillItem.className = 'p-4 border border-gray-200 rounded-lg';
+        skillItem.className = 'p-4 border border-gray-200 rounded-lg bg-gray-50';
 
         skillItem.innerHTML = `
-          <div class="flex justify-between items-center">
-            <div>
-              <h4 class="font-semibold">${skill.name}</h4>
-              <p class="text-sm text-gray-600">Categoria: ${skill.category}</p>
-              <p class="text-sm text-gray-600">Nível: ${skill.level}</p>
+          <div class="flex justify-between items-start">
+            <div class="flex-1">
+              <h4 class="font-semibold text-lg text-gray-800">${skill.name}</h4>
+              <div class="flex flex-wrap gap-2 mt-2">
+                <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">${skill.category}</span>
+                <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">${skill.level}</span>
+              </div>
+              ${skill.description ? `<p class="text-sm text-gray-600 mt-2">${skill.description}</p>` : ''}
             </div>
-            <div class="flex space-x-2">
-              <button onclick="editSkill(${index})" class="text-blue-500 hover:text-blue-700">Editar</button>
-              <button onclick="removeSkill(${index})" class="text-red-500 hover:text-red-700">Remover</button>
+            <div class="flex space-x-2 ml-4">
+              <button onclick="editSkill(${index})" class="text-blue-500 hover:text-blue-700 px-3 py-1 border border-blue-500 rounded-md hover:bg-blue-50 transition duration-300">Editar</button>
+              <button onclick="removeSkill(${index})" class="text-red-500 hover:text-red-700 px-3 py-1 border border-red-500 rounded-md hover:bg-red-50 transition duration-300">Remover</button>
             </div>
           </div>
         `;
@@ -702,23 +715,64 @@
     function editSkill(index) {
       editIndex = index;
       const skill = skills[index];
-      // Aqui você pode implementar a edição similar ao original
-      alert(`Editar habilidade: ${skill.name}`);
+      
+      document.getElementById('skillName').value = skill.name;
+      document.getElementById('skillCategory').value = skill.category;
+      document.getElementById('skillLevel').value = skill.level;
+      document.getElementById('skillDescription').value = skill.description || '';
+      
+      document.getElementById('formTitle').textContent = 'Editar Habilidade';
+      document.getElementById('submitButton').textContent = 'Atualizar Habilidade';
+      document.getElementById('cancelButton').classList.remove('hidden');
+      
+      document.getElementById('skillName').scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('skillName').focus();
     }
 
     function removeSkill(index) {
-      skills.splice(index, 1);
-      renderSkills();
+      if (confirm('Tem certeza que deseja remover esta habilidade?')) {
+        skills.splice(index, 1);
+        renderSkills();
+        updateSkillsCount();
+      }
+    }
+
+    function cancelEdit() {
+      editIndex = null;
+      resetForm();
+    }
+
+    function resetForm() {
+      document.getElementById('addSkillForm').reset();
+      document.getElementById('formTitle').textContent = 'Adicionar Nova Habilidade';
+      document.getElementById('submitButton').textContent = 'Adicionar Habilidade';
+      document.getElementById('cancelButton').classList.add('hidden');
+    }
+
+    function updateSkillsCount() {
+      const count = skills.length;
+      document.getElementById('skillsCount').textContent = `${count} habilidade${count !== 1 ? 's' : ''}`;
     }
 
     // Inicializar habilidades
     skills = [
-      { name: 'Desenvolvimento Front-end', category: 'Técnicas', level: 'Intermediário' },
-      { name: 'Comunicação Eficaz', category: 'Comportamentais', level: 'Avançado' }
+      { 
+        name: 'Desenvolvimento Front-end', 
+        category: 'Técnicas', 
+        level: 'Intermediário',
+        description: 'HTML, CSS, JavaScript e frameworks modernos'
+      },
+      { 
+        name: 'Comunicação Eficaz', 
+        category: 'Comportamentais', 
+        level: 'Avançado',
+        description: 'Apresentações, negociação e comunicação interpessoal'
+      }
     ];
     renderSkills();
+    updateSkillsCount();
 
-    // Funções para modais de metas e mentorias
+    // FUNÇÕES PARA MODAIS DE METAS E MENTORIAS
     function showAddGoalForm() {
       document.getElementById('addGoalModal').classList.remove('hidden');
     }

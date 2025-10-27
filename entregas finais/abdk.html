@@ -1,0 +1,1887 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FacilitaRH - Dashboard Gestor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .page {
+      display: none;
+    }
+    .page-active {
+      display: block;
+    }
+    .loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    
+    .btn-loading {
+      position: relative;
+      color: transparent;
+    }
+    
+    .btn-loading::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: 50%;
+      left: 50%;
+      margin-left: -8px;
+      margin-top: -8px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      border-right-color: transparent;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .error-message {
+      background-color: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .success-message {
+      background-color: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #16a34a;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    .sidebar {
+      width: 280px;
+      transition: all 0.3s;
+    }
+
+    .sidebar.collapsed {
+      width: 80px;
+    }
+
+    .progress-ring {
+      transform: rotate(-90deg);
+    }
+
+    .progress-ring-circle {
+      transition: stroke-dashoffset 0.3s;
+    }
+
+    .tab-button {
+      padding: 12px 24px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .tab-button.active {
+      border-bottom-color: #4f46e5;
+      color: #4f46e5;
+      font-weight: 600;
+    }
+
+    .collapse-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+    }
+
+    .collapse-content.expanded {
+      max-height: 500px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <div class="sidebar bg-indigo-800 text-white flex flex-col">
+      <div class="p-6 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center">
+            <i class="fas fa-chart-line text-white"></i>
+          </div>
+          <span class="text-xl font-bold">FacilitaRH</span>
+        </div>
+        <button id="sidebarToggle" class="text-white hover:bg-indigo-700 p-2 rounded-lg">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+
+      <nav class="flex-1 px-4 py-6">
+        <ul class="space-y-2">
+          <li>
+            <a href="#" onclick="showPage('dashboard')" class="flex items-center space-x-3 p-3 rounded-lg bg-indigo-700 hover:bg-indigo-600 transition duration-200">
+              <i class="fas fa-tachometer-alt w-6 text-center"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="showPage('employees')" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-indigo-600 transition duration-200">
+              <i class="fas fa-users w-6 text-center"></i>
+              <span>Funcionários</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="showPage('metas')" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-indigo-600 transition duration-200">
+              <i class="fas fa-bullseye w-6 text-center"></i>
+              <span>Metas</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="showPage('treinamentos')" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-indigo-600 transition duration-200">
+              <i class="fas fa-graduation-cap w-6 text-center"></i>
+              <span>Treinamentos</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="showPage('avaliacoes')" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-indigo-600 transition duration-200">
+              <i class="fas fa-clipboard-check w-6 text-center"></i>
+              <span>Avaliações</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="showPage('relatorios')" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-indigo-600 transition duration-200">
+              <i class="fas fa-chart-bar w-6 text-center"></i>
+              <span>Relatórios</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="showPage('configuracoes')" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-indigo-600 transition duration-200">
+              <i class="fas fa-cog w-6 text-center"></i>
+              <span>Configurações</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="p-4 border-t border-indigo-700">
+        <div class="flex items-center space-x-3 p-3">
+          <img class="w-10 h-10 rounded-full" src="https://via.placeholder.com/40" alt="Gestor">
+          <div class="flex-1">
+            <p class="text-sm font-medium">João Silva</p>
+            <p class="text-xs text-indigo-200">Gestor de RH</p>
+          </div>
+          <button class="text-indigo-200 hover:text-white">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- Header -->
+      <header class="bg-white shadow-sm">
+        <div class="flex items-center justify-between p-4">
+          <h1 id="pageTitle" class="text-2xl font-bold text-gray-800">Dashboard do Gestor</h1>
+          <div class="flex items-center space-x-4">
+            <div class="relative">
+              <i class="fas fa-bell text-gray-500 hover:text-indigo-600 cursor-pointer"></i>
+              <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+            </div>
+            <div class="relative">
+              <input type="text" placeholder="Pesquisar..." class="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Área de Mensagens -->
+      <div id="messageArea" class="mx-6 mt-4"></div>
+
+      <!-- Páginas -->
+      <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page page-active">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Card Total de Funcionários -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-500 text-sm">Total de Funcionários</p>
+                  <h3 class="text-3xl font-bold text-gray-800 mt-2" id="totalEmployees">24</h3>
+                </div>
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <i class="fas fa-users text-blue-600 text-xl"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center text-sm text-green-600">
+                <i class="fas fa-arrow-up mr-1"></i>
+                <span>+2 desde o último mês</span>
+              </div>
+            </div>
+
+            <!-- Card Metas em Andamento -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-500 text-sm">Metas em Andamento</p>
+                  <h3 class="text-3xl font-bold text-gray-800 mt-2" id="activeGoals">18</h3>
+                </div>
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                  <i class="fas fa-bullseye text-green-600 text-xl"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center text-sm text-green-600">
+                <i class="fas fa-arrow-up mr-1"></i>
+                <span>75% de conclusão</span>
+              </div>
+            </div>
+
+            <!-- Card Treinamentos Ativos -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-500 text-sm">Treinamentos Ativos</p>
+                  <h3 class="text-3xl font-bold text-gray-800 mt-2" id="activeTrainings">8</h3>
+                </div>
+                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <i class="fas fa-graduation-cap text-purple-600 text-xl"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center text-sm text-green-600">
+                <i class="fas fa-arrow-up mr-1"></i>
+                <span>+3 novos este mês</span>
+              </div>
+            </div>
+
+            <!-- Card Avaliações Pendentes -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-500 text-sm">Avaliações Pendentes</p>
+                  <h3 class="text-3xl font-bold text-gray-800 mt-2" id="pendingEvaluations">5</h3>
+                </div>
+                <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                  <i class="fas fa-clipboard-check text-yellow-600 text-xl"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center text-sm text-red-600">
+                <i class="fas fa-clock mr-1"></i>
+                <span>Vencem em 7 dias</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gráficos e Tabelas -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Gráfico de Desempenho -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Desempenho da Equipe</h3>
+              <div class="h-80">
+                <canvas id="performanceChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Últimas Atividades -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Últimas Atividades</h3>
+              <div class="space-y-4">
+                <div class="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
+                  <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-user-plus text-blue-600 text-sm"></i>
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-sm font-medium">Novo funcionário contratado</p>
+                    <p class="text-xs text-gray-500">Maria Santos - Desenvolvedora Front-end</p>
+                  </div>
+                  <span class="text-xs text-gray-400">2h atrás</span>
+                </div>
+
+                <div class="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
+                  <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-bullseye text-green-600 text-sm"></i>
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-sm font-medium">Meta concluída</p>
+                    <p class="text-xs text-gray-500">João Silva - Certificação Cloud</p>
+                  </div>
+                  <span class="text-xs text-gray-400">1 dia atrás</span>
+                </div>
+
+                <div class="flex items-center space-x-3 p-3 bg-purple-50 rounded-lg">
+                  <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-graduation-cap text-purple-600 text-sm"></i>
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-sm font-medium">Treinamento iniciado</p>
+                    <p class="text-xs text-gray-500">Liderança e Gestão de Equipes</p>
+                  </div>
+                  <span class="text-xs text-gray-400">2 dias atrás</span>
+                </div>
+
+                <div class="flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg">
+                  <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-clipboard-check text-yellow-600 text-sm"></i>
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-sm font-medium">Avaliação agendada</p>
+                    <p class="text-xs text-gray-500">Avaliação de desempenho trimestral</p>
+                  </div>
+                  <span class="text-xs text-gray-400">3 dias atrás</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Página de Funcionários -->
+        <div id="employees" class="page">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Gestão de Funcionários</h2>
+            <button onclick="showAddEmployeeForm()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+              <i class="fas fa-plus mr-2"></i>Novo Funcionário
+            </button>
+          </div>
+
+          <!-- Filtros -->
+          <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Departamento</label>
+                <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  <option value="">Todos</option>
+                  <option value="ti">TI</option>
+                  <option value="rh">RH</option>
+                  <option value="vendas">Vendas</option>
+                  <option value="marketing">Marketing</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Cargo</label>
+                <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  <option value="">Todos</option>
+                  <option value="desenvolvedor">Desenvolvedor</option>
+                  <option value="analista">Analista</option>
+                  <option value="gerente">Gerente</option>
+                  <option value="estagiario">Estagiário</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  <option value="">Todos</option>
+                  <option value="ativo">Ativo</option>
+                  <option value="inativo">Inativo</option>
+                </select>
+              </div>
+              <div class="flex items-end">
+                <button class="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition duration-200">
+                  <i class="fas fa-filter mr-2"></i>Filtrar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabela de Funcionários -->
+          <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Funcionário</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cargo</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Departamento</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progresso</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="employeeTableBody" class="bg-white divide-y divide-gray-200">
+                  <!-- Dados serão preenchidos via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Paginação -->
+          <div class="flex items-center justify-between mt-6 bg-white rounded-xl shadow-md p-4">
+            <div class="text-sm text-gray-700">
+              Mostrando <span id="startItem">1</span> a <span id="endItem">5</span> de <span id="totalItems">24</span> resultados
+            </div>
+            <div class="flex space-x-2">
+              <button class="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50">Anterior</button>
+              <button class="px-3 py-1 bg-indigo-600 text-white rounded-lg">1</button>
+              <button class="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50">2</button>
+              <button class="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50">Próximo</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Página de Metas -->
+        <div id="metas" class="page">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Gestão de Metas</h2>
+            <button onclick="showAddGoalForm()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+              <i class="fas fa-plus mr-2"></i>Nova Meta
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Metas em Andamento -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Metas em Andamento</h3>
+              <div id="activeGoalsList" class="space-y-4">
+                <!-- Metas serão preenchidas via JavaScript -->
+              </div>
+            </div>
+
+            <!-- Metas Concluídas -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Metas Concluídas</h3>
+              <div id="completedGoalsList" class="space-y-4">
+                <!-- Metas serão preenchidas via JavaScript -->
+              </div>
+            </div>
+
+            <!-- Estatísticas de Metas -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Estatísticas</h3>
+              <div class="space-y-4">
+                <div class="text-center">
+                  <div class="inline-block relative">
+                    <svg class="w-32 h-32" viewBox="0 0 36 36">
+                      <circle cx="18" cy="18" r="16" fill="none" class="stroke-gray-200" stroke-width="2"></circle>
+                      <circle cx="18" cy="18" r="16" fill="none" class="stroke-green-500" stroke-width="2"
+                        stroke-dasharray="100"
+                        stroke-dashoffset="25">
+                      </circle>
+                      <text x="18" y="20" text-anchor="middle" class="text-sm font-bold">75%</text>
+                    </svg>
+                  </div>
+                  <p class="text-sm text-gray-600 mt-2">Taxa de Conclusão Geral</p>
+                </div>
+
+                <div class="space-y-2">
+                  <div class="flex justify-between text-sm">
+                    <span>Em Andamento</span>
+                    <span class="font-medium">18</span>
+                  </div>
+                  <div class="flex justify-between text-sm">
+                    <span>Concluídas</span>
+                    <span class="font-medium">12</span>
+                  </div>
+                  <div class="flex justify-between text-sm">
+                    <span>Atrasadas</span>
+                    <span class="font-medium">3</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Página de Treinamentos -->
+        <div id="treinamentos" class="page">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Gestão de Treinamentos</h2>
+            <button onclick="showAddTrainingForm()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+              <i class="fas fa-plus mr-2"></i>Novo Treinamento
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Treinamentos Ativos -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Treinamentos Ativos</h3>
+              <div class="space-y-4">
+                <div class="border border-gray-200 rounded-lg p-4">
+                  <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                      <h4 class="font-medium">Liderança e Gestão de Equipes</h4>
+                      <p class="text-sm text-gray-500 mt-1">Desenvolvimento de habilidades de liderança</p>
+                    </div>
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                      Ativo
+                    </span>
+                  </div>
+                  <div class="mt-3">
+                    <div class="flex justify-between text-sm text-gray-500 mb-1">
+                      <span>Progresso Geral</span>
+                      <span>65%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="bg-blue-500 h-2 rounded-full" style="width: 65%"></div>
+                    </div>
+                  </div>
+                  <div class="flex justify-between mt-2 text-sm text-gray-500">
+                    <span>Instrutor: Carlos Mendes</span>
+                    <span>12 participantes</span>
+                  </div>
+                </div>
+
+                <div class="border border-gray-200 rounded-lg p-4">
+                  <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                      <h4 class="font-medium">Comunicação Eficaz</h4>
+                      <p class="text-sm text-gray-500 mt-1">Técnicas de comunicação interpessoal</p>
+                    </div>
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                      Ativo
+                    </span>
+                  </div>
+                  <div class="mt-3">
+                    <div class="flex justify-between text-sm text-gray-500 mb-1">
+                      <span>Progresso Geral</span>
+                      <span>80%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="bg-blue-500 h-2 rounded-full" style="width: 80%"></div>
+                    </div>
+                  </div>
+                  <div class="flex justify-between mt-2 text-sm text-gray-500">
+                    <span>Instrutor: Ana Costa</span>
+                    <span>8 participantes</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Próximos Treinamentos -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Próximos Treinamentos</h3>
+              <div class="space-y-4">
+                <div class="border border-gray-200 rounded-lg p-4">
+                  <h4 class="font-medium">Gestão do Tempo</h4>
+                  <p class="text-sm text-gray-500 mt-1">15 de Março, 2024 - 14:00</p>
+                  <div class="mt-2 flex items-center text-sm text-gray-500">
+                    <i class="fas fa-users mr-2"></i>
+                    <span>20 vagas disponíveis</span>
+                  </div>
+                  <button class="w-full mt-3 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+                    Inscrever Funcionários
+                  </button>
+                </div>
+
+                <div class="border border-gray-200 rounded-lg p-4">
+                  <h4 class="font-medium">Inteligência Emocional</h4>
+                  <p class="text-sm text-gray-500 mt-1">22 de Março, 2024 - 09:00</p>
+                  <div class="mt-2 flex items-center text-sm text-gray-500">
+                    <i class="fas fa-users mr-2"></i>
+                    <span>15 vagas disponíveis</span>
+                  </div>
+                  <button class="w-full mt-3 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+                    Inscrever Funcionários
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Estatísticas de Treinamento -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Estatísticas</h3>
+              <div class="space-y-4">
+                <div class="text-center">
+                  <div class="inline-block relative">
+                    <svg class="w-32 h-32" viewBox="0 0 36 36">
+                      <circle cx="18" cy="18" r="16" fill="none" class="stroke-gray-200" stroke-width="2"></circle>
+                      <circle cx="18" cy="18" r="16" fill="none" class="stroke-purple-500" stroke-width="2"
+                        stroke-dasharray="100"
+                        stroke-dashoffset="40">
+                      </circle>
+                      <text x="18" y="20" text-anchor="middle" class="text-sm font-bold">60%</text>
+                    </svg>
+                  </div>
+                  <p class="text-sm text-gray-600 mt-2">Participação em Treinamentos</p>
+                </div>
+
+                <div class="space-y-2">
+                  <div class="flex justify-between text-sm">
+                    <span>Treinamentos Ativos</span>
+                    <span class="font-medium">6</span>
+                  </div>
+                  <div class="flex justify-between text-sm">
+                    <span>Total de Participantes</span>
+                    <span class="font-medium">48</span>
+                  </div>
+                  <div class="flex justify-between text-sm">
+                    <span>Média de Satisfação</span>
+                    <span class="font-medium">4.2/5.0</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Página de Avaliações -->
+        <div id="avaliacoes" class="page">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Avaliações de Desempenho</h2>
+            <button onclick="showAddEvaluationForm()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+              <i class="fas fa-plus mr-2"></i>Nova Avaliação
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Avaliações Pendentes -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Avaliações Pendentes</h3>
+              <div class="space-y-4">
+                <div class="border border-gray-200 rounded-lg p-4">
+                  <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                      <h4 class="font-medium">Avaliação Trimestral - Q1 2024</h4>
+                      <p class="text-sm text-gray-500 mt-1">Período: Jan-Mar 2024</p>
+                    </div>
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                      Pendente
+                    </span>
+                  </div>
+                  <div class="mt-3">
+                    <div class="flex justify-between text-sm text-gray-500">
+                      <span>Vence em: 15/03/2024</span>
+                      <span>12 funcionários</span>
+                    </div>
+                  </div>
+                  <button class="w-full mt-3 bg-yellow-600 text-white py-2 rounded-lg hover:bg-yellow-700 transition duration-200">
+                    Realizar Avaliação
+                  </button>
+                </div>
+
+                <div class="border border-gray-200 rounded-lg p-4">
+                  <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                      <h4 class="font-medium">Avaliação de Competências</h4>
+                      <p class="text-sm text-gray-500 mt-1">Habilidades técnicas e comportamentais</p>
+                    </div>
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                      Pendente
+                    </span>
+                  </div>
+                  <div class="mt-3">
+                    <div class="flex justify-between text-sm text-gray-500">
+                      <span>Vence em: 20/03/2024</span>
+                      <span>8 funcionários</span>
+                    </div>
+                  </div>
+                  <button class="w-full mt-3 bg-yellow-600 text-white py-2 rounded-lg hover:bg-yellow-700 transition duration-200">
+                    Realizar Avaliação
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Avaliações Concluídas -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Avaliações Concluídas</h3>
+              <div class="space-y-4">
+                <div class="border border-gray-200 rounded-lg p-4">
+                  <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                      <h4 class="font-medium">Avaliação Anual 2023</h4>
+                      <p class="text-sm text-gray-500 mt-1">Período: 2023</p>
+                    </div>
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                      Concluída
+                    </span>
+                  </div>
+                  <div class="mt-3">
+                    <div class="flex justify-between text-sm text-gray-500">
+                      <span>Concluída em: 15/12/2023</span>
+                      <span>24 funcionários</span>
+                    </div>
+                  </div>
+                  <div class="mt-2">
+                    <div class="flex justify-between text-sm">
+                      <span class="text-gray-500">Média Geral:</span>
+                      <span class="font-medium text-green-600">4.3/5.0</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="border border-gray-200 rounded-lg p-4">
+                  <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                      <h4 class="font-medium">Avaliação de Projeto</h4>
+                      <p class="text-sm text-gray-500 mt-1">Projeto: Sistema de Gestão</p>
+                    </div>
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                      Concluída
+                    </span>
+                  </div>
+                  <div class="mt-3">
+                    <div class="flex justify-between text-sm text-gray-500">
+                      <span>Concluída em: 28/02/2024</span>
+                      <span>6 funcionários</span>
+                    </div>
+                  </div>
+                  <div class="mt-2">
+                    <div class="flex justify-between text-sm">
+                      <span class="text-gray-500">Média Geral:</span>
+                      <span class="font-medium text-green-600">4.7/5.0</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Métricas de Desempenho -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Métricas de Desempenho</h3>
+              <div class="space-y-6">
+                <div>
+                  <div class="flex justify-between text-sm mb-2">
+                    <span class="text-gray-600">Satisfação no Trabalho</span>
+                    <span class="font-medium">4.2/5.0</span>
+                  </div>
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-green-500 h-2 rounded-full" style="width: 84%"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex justify-between text-sm mb-2">
+                    <span class="text-gray-600">Competências Técnicas</span>
+                    <span class="font-medium">4.5/5.0</span>
+                  </div>
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-500 h-2 rounded-full" style="width: 90%"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex justify-between text-sm mb-2">
+                    <span class="text-gray-600">Habilidades Interpessoais</span>
+                    <span class="font-medium">4.1/5.0</span>
+                  </div>
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-purple-500 h-2 rounded-full" style="width: 82%"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex justify-between text-sm mb-2">
+                    <span class="text-gray-600">Produtividade</span>
+                    <span class="font-medium">4.3/5.0</span>
+                  </div>
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-yellow-500 h-2 rounded-full" style="width: 86%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Página de Relatórios -->
+        <div id="relatorios" class="page">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Relatórios e Analytics</h2>
+            <div class="flex space-x-3">
+              <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200">
+                <i class="fas fa-download mr-2"></i>Exportar PDF
+              </button>
+              <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200">
+                <i class="fas fa-file-excel mr-2"></i>Exportar Excel
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Gráfico de Turnover -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Taxa de Turnover</h3>
+              <div class="h-80">
+                <canvas id="turnoverChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Gráfico de Satisfação -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Satisfação dos Funcionários</h3>
+              <div class="h-80">
+                <canvas id="satisfactionChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Métricas Detalhadas -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <div class="bg-white rounded-xl shadow-md p-6 text-center">
+              <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-user-clock text-blue-600 text-xl"></i>
+              </div>
+              <h4 class="text-lg font-semibold text-gray-800">Tempo Médio de Empresa</h4>
+              <p class="text-2xl font-bold text-blue-600 mt-2">3.2 anos</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6 text-center">
+              <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-chart-line text-green-600 text-xl"></i>
+              </div>
+              <h4 class="text-lg font-semibold text-gray-800">Crescimento</h4>
+              <p class="text-2xl font-bold text-green-600 mt-2">+15%</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6 text-center">
+              <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-graduation-cap text-purple-600 text-xl"></i>
+              </div>
+              <h4 class="text-lg font-semibold text-gray-800">Treinamentos Concluídos</h4>
+              <p class="text-2xl font-bold text-purple-600 mt-2">142</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6 text-center">
+              <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-bullseye text-yellow-600 text-xl"></i>
+              </div>
+              <h4 class="text-lg font-semibold text-gray-800">Metas Atingidas</h4>
+              <p class="text-2xl font-bold text-yellow-600 mt-2">87%</p>
+            </div>
+          </div>
+
+          <!-- Tabela de Relatórios -->
+          <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="p-6 border-b border-gray-200">
+              <h3 class="text-lg font-semibold text-gray-800">Relatórios Disponíveis</h3>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Relatório</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Período</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Última Atualização</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm font-medium text-gray-900">Relatório de Desempenho</div>
+                      <div class="text-sm text-gray-500">Métricas individuais e de equipe</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Trimestral</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">15/02/2024</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button class="text-indigo-600 hover:text-indigo-900 mr-3">Visualizar</button>
+                      <button class="text-green-600 hover:text-green-900">Exportar</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm font-medium text-gray-900">Relatório de Treinamentos</div>
+                      <div class="text-sm text-gray-500">Participação e resultados</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Mensal</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">28/02/2024</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button class="text-indigo-600 hover:text-indigo-900 mr-3">Visualizar</button>
+                      <button class="text-green-600 hover:text-green-900">Exportar</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm font-medium text-gray-900">Relatório de Turnover</div>
+                      <div class="text-sm text-gray-500">Rotatividade e retenção</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Semestral</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">31/12/2023</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button class="text-indigo-600 hover:text-indigo-900 mr-3">Visualizar</button>
+                      <button class="text-green-600 hover:text-green-900">Exportar</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Página de Configurações -->
+        <div id="configuracoes" class="page">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Configurações do Sistema</h2>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Configurações Gerais -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Configurações Gerais</h3>
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Nome da Empresa</label>
+                  <input type="text" value="Tech Solutions Ltda" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Email de Contato</label>
+                  <input type="email" value="rh@techsolutions.com" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Fuso Horário</label>
+                  <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option selected>America/Sao_Paulo (BRT)</option>
+                    <option>UTC</option>
+                    <option>America/New_York</option>
+                  </select>
+                </div>
+                <button class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+                  Salvar Configurações
+                </button>
+              </div>
+            </div>
+
+            <!-- Configurações de Notificações -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Notificações</h3>
+              <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-sm font-medium text-gray-800">Notificações por Email</p>
+                    <p class="text-xs text-gray-500">Receber alertas importantes</p>
+                  </div>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer" checked>
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                  </label>
+                </div>
+
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-sm font-medium text-gray-800">Lembretes de Metas</p>
+                    <p class="text-xs text-gray-500">Alertas de prazos próximos</p>
+                  </div>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer" checked>
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                  </label>
+                </div>
+
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-sm font-medium text-gray-800">Novos Treinamentos</p>
+                    <p class="text-xs text-gray-500">Notificar sobre novos cursos</p>
+                  </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer" checked>
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                  </label>
+                </div>
+
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-sm font-medium text-gray-800">Avaliações Pendentes</p>
+                    <p class="text-xs text-gray-500">Lembretes de avaliações</p>
+                  </div>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer" checked>
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Configurações de Segurança -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Segurança</h3>
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Alterar Senha</label>
+                  <input type="password" placeholder="Nova senha" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-2">
+                  <input type="password" placeholder="Confirmar senha" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-sm font-medium text-gray-800">Autenticação em Dois Fatores</p>
+                    <p class="text-xs text-gray-500">Aumentar a segurança da conta</p>
+                  </div>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                  </label>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Sessão Ativa</label>
+                  <p class="text-sm text-gray-600">Sua sessão expira em: <span class="font-medium">2 horas</span></p>
+                </div>
+
+                <button class="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition duration-200">
+                  <i class="fas fa-sign-out-alt mr-2"></i>Encerrar Todas as Sessões
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Backup e Exportação -->
+          <div class="bg-white rounded-xl shadow-md p-6 mt-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Backup e Exportação</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h4 class="text-md font-medium text-gray-800 mb-3">Backup de Dados</h4>
+                <p class="text-sm text-gray-600 mb-4">Último backup: 28/02/2024 23:45</p>
+                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200">
+                  <i class="fas fa-database mr-2"></i>Realizar Backup Agora
+                </button>
+              </div>
+              
+              <div>
+                <h4 class="text-md font-medium text-gray-800 mb-3">Exportação de Dados</h4>
+                <p class="text-sm text-gray-600 mb-4">Exportar todos os dados do sistema</p>
+                <div class="flex space-x-2">
+                  <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200">
+                    <i class="fas fa-file-excel mr-2"></i>Excel
+                  </button>
+                  <button class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-200">
+                    <i class="fas fa-file-pdf mr-2"></i>PDF
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal Adicionar Funcionário -->
+  <div id="addEmployeeModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-xl w-full max-w-2xl mx-4">
+      <div class="p-6 border-b border-gray-200">
+        <h3 class="text-xl font-semibold text-gray-800">Adicionar Novo Funcionário</h3>
+      </div>
+      <form id="addEmployeeForm" class="p-6 space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Nome Completo</label>
+            <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <input type="email" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Cargo</label>
+            <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+              <option value="">Selecione um cargo</option>
+              <option value="desenvolvedor">Desenvolvedor</option>
+              <option value="analista">Analista</option>
+              <option value="gerente">Gerente</option>
+              <option value="estagiario">Estagiário</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Departamento</label>
+            <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+              <option value="">Selecione um departamento</option>
+              <option value="ti">TI</option>
+              <option value="rh">RH</option>
+              <option value="vendas">Vendas</option>
+              <option value="marketing">Marketing</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Data de Admissão</label>
+            <input type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+            <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+              <option value="ativo">Ativo</option>
+              <option value="inativo">Inativo</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Foto (URL)</label>
+          <input type="url" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="https://...">
+        </div>
+      </form>
+      <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+        <button type="button" onclick="closeAddEmployeeForm()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-200">Cancelar</button>
+        <button type="submit" form="addEmployeeForm" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-200">Adicionar Funcionário</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Adicionar Meta -->
+  <div id="addGoalModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-xl w-full max-w-2xl mx-4">
+      <div class="p-6 border-b border-gray-200">
+        <h3 class="text-xl font-semibold text-gray-800">Adicionar Nova Meta</h3>
+      </div>
+      <form id="addGoalForm" class="p-6 space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Título da Meta</label>
+          <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+          <textarea class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" rows="3" required></textarea>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Prazo</label>
+            <input type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Prioridade</label>
+            <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+              <option value="baixa">Baixa</option>
+              <option value="media">Média</option>
+              <option value="alta">Alta</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Funcionário</label>
+          <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+            <option value="">Selecione um funcionário</option>
+            <option value="1">João Silva - Desenvolvedor</option>
+            <option value="2">Maria Santos - Analista</option>
+            <option value="3">Pedro Costa - Gerente</option>
+          </select>
+        </div>
+      </form>
+      <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+        <button type="button" onclick="closeAddGoalForm()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-200">Cancelar</button>
+        <button type="submit" form="addGoalForm" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-200">Adicionar Meta</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Editar Meta -->
+  <div id="editGoalModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-xl w-full max-w-2xl mx-4">
+      <div class="p-6 border-b border-gray-200">
+        <h3 class="text-xl font-semibold text-gray-800">Editar Meta</h3>
+      </div>
+      <form id="editGoalForm" class="p-6 space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Título da Meta</label>
+          <input type="text" id="editGoalTitle" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+          <textarea id="editGoalDescription" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" rows="3" required></textarea>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Prazo</label>
+            <input type="date" id="editGoalDeadline" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Progresso</label>
+            <input type="number" id="editGoalProgress" min="0" max="100" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Prioridade</label>
+            <select id="editGoalPriority" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+              <option value="baixa">Baixa</option>
+              <option value="media">Média</option>
+              <option value="alta">Alta</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+            <select id="editGoalStatus" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+              <option value="em_andamento">Em Andamento</option>
+              <option value="concluido">Concluído</option>
+              <option value="cancelado">Cancelado</option>
+            </select>
+          </div>
+        </div>
+      </form>
+      <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+        <button type="button" onclick="closeEditGoalForm()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-200">Cancelar</button>
+        <button type="submit" form="editGoalForm" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-200">Salvar Alterações</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Detalhes do Funcionário -->
+  <div id="employeeDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+      <div class="p-6 border-b border-gray-200">
+        <h3 class="text-xl font-semibold text-gray-800" id="employeeModalTitle">Detalhes do Funcionário</h3>
+      </div>
+      <div class="p-6">
+        <div class="flex items-start space-x-6 mb-6">
+          <img id="employeeModalPhoto" src="https://via.placeholder.com/150" alt="Foto" class="w-32 h-32 rounded-lg object-cover">
+          <div class="flex-1">
+            <h4 class="text-2xl font-bold text-gray-800" id="employeeModalName">Nome do Funcionário</h4>
+            <p class="text-lg text-gray-600" id="employeeModalRole">Cargo</p>
+            <div class="flex items-center space-x-4 mt-2">
+              <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium" id="employeeModalDept">Departamento</span>
+              <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium" id="employeeModalStatus">Status</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <h5 class="text-lg font-semibold text-gray-800 mb-3">Informações Pessoais</h5>
+            <div class="space-y-2">
+              <div class="flex justify-between">
+                <span class="text-gray-600">Email:</span>
+                <span class="font-medium" id="employeeModalEmail">email@empresa.com</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Data de Admissão:</span>
+                <span class="font-medium" id="employeeModalHireDate">01/01/2023</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Tempo de Empresa:</span>
+                <span class="font-medium">1 ano, 2 meses</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h5 class="text-lg font-semibold text-gray-800 mb-3">Desempenho</h5>
+            <div class="space-y-2">
+              <div class="flex justify-between">
+                <span class="text-gray-600">Progresso Geral:</span>
+                <span class="font-medium">85%</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Metas Concluídas:</span>
+                <span class="font-medium">12/15</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Última Avaliação:</span>
+                <span class="font-medium">4.5/5.0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Abas -->
+        <div class="border-b border-gray-200 mb-6">
+          <div class="flex space-x-8">
+            <button class="tab-button active" onclick="showEmployeeTab('metas')">Metas</button>
+            <button class="tab-button" onclick="showEmployeeTab('treinamentos')">Treinamentos</button>
+            <button class="tab-button" onclick="showEmployeeTab('avaliacoes')">Avaliações</button>
+            <button class="tab-button" onclick="showEmployeeTab('historico')">Histórico</button>
+          </div>
+        </div>
+
+        <!-- Conteúdo das Abas -->
+        <div id="employeeTabContent">
+          <div id="tabMetas" class="tab-content">
+            <div class="space-y-4" id="employeeGoalsList">
+              <!-- Metas do funcionário serão carregadas aqui -->
+            </div>
+          </div>
+          <div id="tabTreinamentos" class="tab-content hidden">
+            <div class="space-y-4">
+              <div class="border border-gray-200 rounded-lg p-4">
+                <h6 class="font-medium">Liderança e Gestão de Equipes</h6>
+                <p class="text-sm text-gray-500 mt-1">Concluído em 15/02/2024</p>
+                <div class="mt-2">
+                  <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Concluído</span>
+                </div>
+              </div>
+              <div class="border border-gray-200 rounded-lg p-4">
+                <h6 class="font-medium">Comunicação Eficaz</h6>
+                <p class="text-sm text-gray-500 mt-1">Em andamento - 60% concluído</p>
+                <div class="mt-2">
+                  <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">Em Andamento</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="tabAvaliacoes" class="tab-content hidden">
+            <div class="space-y-4">
+              <div class="border border-gray-200 rounded-lg p-4">
+                <h6 class="font-medium">Avaliação Trimestral Q4 2023</h6>
+                <p class="text-sm text-gray-500 mt-1">Concluída em 15/12/2023</p>
+                <div class="mt-2 flex justify-between items-center">
+                  <span class="text-lg font-bold text-green-600">4.5/5.0</span>
+                  <button class="text-indigo-600 hover:text-indigo-800 text-sm">Ver Detalhes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="tabHistorico" class="tab-content hidden">
+            <div class="space-y-3">
+              <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                  <i class="fas fa-bullseye text-green-600 text-sm"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm font-medium">Meta "Certificação AWS" concluída</p>
+                  <p class="text-xs text-gray-500">15/02/2024</p>
+                </div>
+              </div>
+              <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                  <i class="fas fa-graduation-cap text-blue-600 text-sm"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm font-medium">Treinamento de Liderança concluído</p>
+                  <p class="text-xs text-gray-500">10/02/2024</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-6 border-t border-gray-200 flex justify-end">
+        <button type="button" onclick="closeEmployeeDetails()" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition duration-200">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =============================================
+    // DADOS MOCKADOS
+    // =============================================
+    const mockData = {
+      employees: [
+        {
+          id: 1,
+          nome: "João Silva",
+          cargo: "Desenvolvedor Senior",
+          departamento: "TI",
+          email: "joao.silva@empresa.com",
+          foto: "https://via.placeholder.com/150",
+          progresso: 85,
+          status: "ativo",
+          admissao: "2022-03-15"
+        },
+        {
+          id: 2,
+          nome: "Maria Santos",
+          cargo: "Analista de RH",
+          departamento: "RH",
+          email: "maria.santos@empresa.com",
+          foto: "https://via.placeholder.com/150",
+          progresso: 92,
+          status: "ativo",
+          admissao: "2021-08-22"
+        },
+        {
+          id: 3,
+          nome: "Pedro Costa",
+          cargo: "Gerente de Projetos",
+          departamento: "TI",
+          email: "pedro.costa@empresa.com",
+          foto: "https://via.placeholder.com/150",
+          progresso: 78,
+          status: "ativo",
+          admissao: "2020-11-10"
+        }
+      ],
+      goals: [
+        {
+          id: 1,
+          titulo: "Certificação AWS Solutions Architect",
+          descricao: "Concluir certificação AWS e implementar soluções em cloud",
+          prazo: "2024-03-15",
+          progresso: 75,
+          prioridade: "alta",
+          status: "em_andamento",
+          funcionarioId: 1
+        },
+        {
+          id: 2,
+          titulo: "Curso de Liderança Avançada",
+          descricao: "Completar curso avançado de liderança e gestão de equipes",
+          prazo: "2024-02-28",
+          progresso: 100,
+          prioridade: "media",
+          status: "concluido",
+          funcionarioId: 3
+        },
+        {
+          id: 3,
+          titulo: "Meta de Vendas Q1 2024",
+          descricao: "Atingir meta de vendas do primeiro trimestre de 2024",
+          prazo: "2024-03-31",
+          progresso: 60,
+          prioridade: "alta",
+          status: "em_andamento",
+          funcionarioId: 2
+        }
+      ]
+    };
+
+    // Variáveis globais
+    let currentEmployeeId = null;
+    let currentGoalId = null;
+
+    // =============================================
+    // FUNÇÕES PRINCIPAIS
+    // =============================================
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('page-active');
+      });
+      document.getElementById(pageId).classList.add('page-active');
+      
+      const titles = {
+        'dashboard': 'Dashboard do Gestor',
+        'employees': 'Gestão de Funcionários',
+        'metas': 'Gestão de Metas',
+        'treinamentos': 'Treinamentos e Desenvolvimento',
+        'avaliacoes': 'Avaliações de Desempenho',
+        'relatorios': 'Relatórios e Analytics',
+        'configuracoes': 'Configurações do Sistema'
+      };
+      
+      document.getElementById('pageTitle').textContent = titles[pageId] || 'FacilitaRH';
+      
+      if (pageId === 'employees') {
+        loadEmployeesTable();
+      } else if (pageId === 'metas') {
+        loadGoals();
+      } else if (pageId === 'relatorios') {
+        initReportCharts();
+      }
+    }
+
+    function showMessage(message, type = 'success') {
+      const messageArea = document.getElementById('messageArea');
+      const className = type === 'error' ? 'error-message' : 'success-message';
+      
+      messageArea.innerHTML = `
+        <div class="${className}">
+          <div class="flex justify-between items-center">
+            <span>${message}</span>
+            <button onclick="this.parentElement.parentElement.remove()" class="text-gray-500 hover:text-gray-700">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+      `;
+      
+      setTimeout(() => {
+        if (messageArea.innerHTML.includes(message)) {
+          messageArea.innerHTML = '';
+        }
+      }, 5000);
+    }
+
+    // =============================================
+    // FUNÇÕES DOS FUNCIONÁRIOS
+    // =============================================
+    function loadEmployeesTable() {
+      const tbody = document.getElementById('employeeTableBody');
+      tbody.innerHTML = '';
+      
+      mockData.employees.forEach(emp => {
+        const progressRing = createProgressRing(emp.progresso);
+        const statusBadge = createStatusBadge(emp.status);
+        
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-50';
+        row.innerHTML = `
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-10 w-10">
+                <img class="h-10 w-10 rounded-full" src="${emp.foto}" alt="${emp.nome}">
+              </div>
+              <div class="ml-4">
+                <div class="text-sm font-medium text-gray-900">${emp.nome}</div>
+                <div class="text-sm text-gray-500">${emp.departamento}</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">${emp.cargo}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">${emp.departamento}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              ${progressRing}
+              <div class="ml-2 w-20">
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="bg-green-500 h-2 rounded-full" style="width: ${emp.progresso}%"></div>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            ${statusBadge}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <button onclick="viewEmployee(${emp.id})" class="text-indigo-600 hover:text-indigo-900 mr-3">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button onclick="editEmployee(${emp.id})" class="text-blue-600 hover:text-blue-900 mr-3">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button onclick="deleteEmployee(${emp.id})" class="text-red-600 hover:text-red-900">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+        `;
+        
+        tbody.appendChild(row);
+      });
+      
+      updatePaginationInfo(1, mockData.employees.length, mockData.employees.length);
+    }
+
+    function viewEmployee(id) {
+      const employee = mockData.employees.find(emp => emp.id === id);
+      if (employee) {
+        currentEmployeeId = id;
+        
+        // Preencher informações básicas
+        document.getElementById('employeeModalTitle').textContent = `Detalhes de ${employee.nome}`;
+        document.getElementById('employeeModalName').textContent = employee.nome;
+        document.getElementById('employeeModalRole').textContent = employee.cargo;
+        document.getElementById('employeeModalPhoto').src = employee.foto;
+        document.getElementById('employeeModalDept').textContent = employee.departamento;
+        document.getElementById('employeeModalEmail').textContent = employee.email;
+        
+        // Formatando data de admissão
+        const hireDate = new Date(employee.admissao);
+        document.getElementById('employeeModalHireDate').textContent = hireDate.toLocaleDateString('pt-BR');
+        
+        // Status
+        const statusBadge = document.getElementById('employeeModalStatus');
+        statusBadge.textContent = employee.status === 'ativo' ? 'Ativo' : 'Inativo';
+        statusBadge.className = `px-3 py-1 ${employee.status === 'ativo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} rounded-full text-sm font-medium`;
+        
+        // Carregar metas do funcionário
+        loadEmployeeGoals(employee.id);
+        
+        // Mostrar modal e primeira aba
+        document.getElementById('employeeDetailsModal').classList.remove('hidden');
+        showEmployeeTab('metas');
+      }
+    }
+
+    function loadEmployeeGoals(employeeId) {
+      const goalsList = document.getElementById('employeeGoalsList');
+      goalsList.innerHTML = '';
+      
+      const employeeGoals = mockData.goals.filter(goal => goal.funcionarioId === employeeId);
+      
+      if (employeeGoals.length === 0) {
+        goalsList.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma meta atribuída</p>';
+        return;
+      }
+      
+      employeeGoals.forEach(meta => {
+        const goalElement = createGoalElement(employeeId, meta);
+        goalsList.appendChild(goalElement);
+      });
+    }
+
+    function showEmployeeTab(tabName) {
+      // Esconder todas as abas
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.add('hidden');
+      });
+      
+      // Mostrar aba selecionada
+      document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`).classList.remove('hidden');
+      
+      // Atualizar botões das abas
+      document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+      });
+      event.target.classList.add('active');
+    }
+
+    function closeEmployeeDetails() {
+      document.getElementById('employeeDetailsModal').classList.add('hidden');
+    }
+
+    function showAddEmployeeForm() {
+      document.getElementById('addEmployeeModal').classList.remove('hidden');
+    }
+
+    function closeAddEmployeeForm() {
+      document.getElementById('addEmployeeModal').classList.add('hidden');
+      document.getElementById('addEmployeeForm').reset();
+    }
+
+    function editEmployee(id) {
+      const employee = mockData.employees.find(emp => emp.id === id);
+      if (employee) {
+        showMessage(`Editando funcionário: ${employee.nome}`, 'success');
+        // Aqui você pode abrir um modal de edição similar ao de adição
+      }
+    }
+
+    function deleteEmployee(id) {
+      if (confirm('Tem certeza que deseja remover este funcionário?')) {
+        showMessage('Funcionário removido com sucesso!', 'success');
+      }
+    }
+
+    // =============================================
+    // FUNÇÕES DAS METAS
+    // =============================================
+    function loadGoals() {
+      const activeGoalsList = document.getElementById('activeGoalsList');
+      const completedGoalsList = document.getElementById('completedGoalsList');
+      
+      activeGoalsList.innerHTML = '';
+      completedGoalsList.innerHTML = '';
+      
+      mockData.goals.forEach(goal => {
+        const goalElement = createGoalElement(goal.funcionarioId, goal);
+        
+        if (goal.status === 'em_andamento') {
+          activeGoalsList.appendChild(goalElement);
+        } else {
+          completedGoalsList.appendChild(goalElement);
+        }
+      });
+    }
+
+    function createGoalElement(employeeId, goal) {
+      const element = document.createElement('div');
+      element.className = 'border border-gray-200 rounded-lg p-4';
+      
+      const statusClass = goal.status === 'concluido' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
+      const statusText = goal.status === 'concluido' ? 'Concluído' : 'Em Andamento';
+      const progressColor = goal.status === 'concluido' ? 'bg-green-500' : 'bg-blue-500';
+      
+      element.innerHTML = `
+        <div class="flex justify-between items-start">
+          <div class="flex-1">
+            <h4 class="font-medium">${goal.titulo}</h4>
+            <p class="text-sm text-gray-500 mt-1">${goal.descricao}</p>
+          </div>
+          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">
+            ${statusText}
+          </span>
+        </div>
+        <div class="mt-3">
+          <div class="flex justify-between text-sm text-gray-500 mb-1">
+            <span>Progresso</span>
+            <span>${goal.progresso}%</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="${progressColor} h-2 rounded-full" style="width: ${goal.progresso}%"></div>
+          </div>
+        </div>
+        <div class="flex justify-between mt-2 text-sm text-gray-500">
+          <span>Prazo: ${new Date(goal.prazo).toLocaleDateString('pt-BR')}</span>
+          <span>Prioridade: ${goal.prioridade}</span>
+        </div>
+        <div class="flex justify-end mt-3 space-x-2">
+          <button onclick="editGoal(${employeeId}, ${goal.id})" class="text-blue-600 hover:text-blue-800 text-sm">
+            <i class="fas fa-edit mr-1"></i> Editar
+          </button>
+          <button onclick="deleteGoal(${employeeId}, ${goal.id})" class="text-red-600 hover:text-red-800 text-sm">
+            <i class="fas fa-trash-alt mr-1"></i> Remover
+          </button>
+        </div>
+      `;
+      
+      return element;
+    }
+
+    function showAddGoalForm() {
+      document.getElementById('addGoalModal').classList.remove('hidden');
+    }
+
+    function closeAddGoalForm() {
+      document.getElementById('addGoalModal').classList.add('hidden');
+      document.getElementById('addGoalForm').reset();
+    }
+
+    function editGoal(employeeId, goalId) {
+      const goal = mockData.goals.find(g => g.id === goalId && g.funcionarioId === employeeId);
+      if (goal) {
+        currentGoalId = goalId;
+        
+        // Preencher formulário com dados da meta
+        document.getElementById('editGoalTitle').value = goal.titulo;
+        document.getElementById('editGoalDescription').value = goal.descricao;
+        document.getElementById('editGoalDeadline').value = goal.prazo;
+        document.getElementById('editGoalProgress').value = goal.progresso;
+        document.getElementById('editGoalPriority').value = goal.prioridade;
+        document.getElementById('editGoalStatus').value = goal.status;
+        
+        document.getElementById('editGoalModal').classList.remove('hidden');
+      }
+    }
+
+    function closeEditGoalForm() {
+      document.getElementById('editGoalModal').classList.add('hidden');
+      document.getElementById('editGoalForm').reset();
+    }
+
+    function deleteGoal(employeeId, goalId) {
+      if (confirm('Tem certeza que deseja remover esta meta?')) {
+        showMessage('Meta removida com sucesso!', 'success');
+        loadGoals();
+        if (currentEmployeeId) {
+          loadEmployeeGoals(currentEmployeeId);
+        }
+      }
+    }
+
+    // =============================================
+    // FUNÇÕES DOS RELATÓRIOS
+    // =============================================
+    function initReportCharts() {
+      // Gráfico de Turnover
+      const turnoverCtx = document.getElementById('turnoverChart').getContext('2d');
+      new Chart(turnoverCtx, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+          datasets: [{
+            label: 'Taxa de Turnover (%)',
+            data: [8.2, 7.5, 6.8, 5.9, 5.2, 4.8, 5.1, 4.9, 4.7, 4.5, 4.3, 4.1],
+            borderColor: '#4f46e5',
+            backgroundColor: 'rgba(79, 70, 229, 0.1)',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 10
+            }
+          }
+        }
+      });
+
+      // Gráfico de Satisfação
+      const satisfactionCtx = document.getElementById('satisfactionChart').getContext('2d');
+      new Chart(satisfactionCtx, {
+        type: 'bar',
+        data: {
+          labels: ['TI', 'RH', 'Vendas', 'Marketing', 'Financeiro', 'Operações'],
+          datasets: [{
+            label: 'Satisfação por Departamento',
+            data: [4.5, 4.2, 4.1, 4.3, 4.0, 4.4],
+            backgroundColor: [
+              '#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 5
+            }
+          }
+        }
+      });
+    }
+
+    // =============================================
+    // FUNÇÕES UTILITÁRIAS
+    // =============================================
+    function createProgressRing(progress) {
+      return `
+        <svg class="w-8 h-8" viewBox="0 0 36 36">
+          <circle cx="18" cy="18" r="16" fill="none" class="stroke-gray-200" stroke-width="2"></circle>
+          <circle cx="18" cy="18" r="16" fill="none" class="stroke-green-500" stroke-width="2"
+            stroke-dasharray="100"
+            stroke-dashoffset="${100 - progress}">
+          </circle>
+          <text x="18" y="20" text-anchor="middle" class="text-xs font-bold">${progress}%</text>
+        </svg>
+      `;
+    }
+
+    function createStatusBadge(status) {
+      const isActive = status === 'ativo';
+      const className = isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+      const text = isActive ? 'Ativo' : 'Inativo';
+      
+      return `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${className}">${text}</span>`;
+    }
+
+    function updatePaginationInfo(start, end, total) {
+      document.getElementById('startItem').textContent = start;
+      document.getElementById('endItem').textContent = end;
+      document.getElementById('totalItems').textContent = total;
+    }
+
+    // =============================================
+    // INICIALIZAÇÃO
+    // =============================================
+    document.addEventListener('DOMContentLoaded', function() {
+      // Inicializar gráfico do dashboard
+      const ctx = document.getElementById('performanceChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+          datasets: [{
+            label: 'Desempenho',
+            data: [85, 78, 90, 82, 88, 92],
+            backgroundColor: '#4f46e5',
+            borderColor: '#4f46e5',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100
+            }
+          }
+        }
+      });
+
+      // Configurar formulários
+      document.getElementById('addEmployeeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        showMessage('Funcionário adicionado com sucesso!', 'success');
+        closeAddEmployeeForm();
+        loadEmployeesTable();
+      });
+
+      document.getElementById('addGoalForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        showMessage('Meta adicionada com sucesso!', 'success');
+        closeAddGoalForm();
+        loadGoals();
+      });
+
+      document.getElementById('editGoalForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        showMessage('Meta atualizada com sucesso!', 'success');
+        closeEditGoalForm();
+        loadGoals();
+        if (currentEmployeeId) {
+          loadEmployeeGoals(currentEmployeeId);
+        }
+      });
+
+      // Sidebar toggle
+      document.getElementById('sidebarToggle').addEventListener('click', function() {
+        document.querySelector('.sidebar').classList.toggle('collapsed');
+      });
+
+      showMessage('Sistema carregado com sucesso!', 'success');
+    });
+  </script>
+</body>
+</html>
