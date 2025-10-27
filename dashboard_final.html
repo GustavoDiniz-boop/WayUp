@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plano de Carreira</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .page {
+      display: none;
+    }
+    .page-active {
+      display: block;
+    }
+    .collapse-content {
+      display: none;
+    }
+    .collapse-content.active {
+      display: block;
+    }
+    .custom-checkbox {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #3b82f6;
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+    }
+    .custom-checkbox:checked {
+      background-color: #3b82f6;
+    }
+    .custom-checkbox:checked::after {
+      content: "✔";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans">
+  <!-- Header -->
+  <header class="bg-white shadow-md p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-blue-600">Meu Plano de Carreira</h1>
+    <div class="flex items-center space-x-4">
+      <span class="text-gray-700">Olá, João!</span>
+      <div class="w-10 h-10 bg-gray-300 rounded-full"></div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-md p-4">
+      <nav>
+        <ul class="space-y-2">
+          <li><a href="#" onclick="showPage('dashboard')" class="text-gray-700 hover:text-blue-600">Dashboard</a></li>
+          <li><a href="#" onclick="showPage('metas')" class="text-gray-700 hover:text-blue-600">Metas</a></li>
+          <li><a href="#" onclick="showPage('habilidades')" class="text-gray-700 hover:text-blue-600">Habilidades</a></li>
+          <li><a href="#" onclick="showPage('mentorias')" class="text-gray-700 hover:text-blue-600">Mentorias</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Páginas -->
+    <main class="flex-1 p-6">
+      <!-- Dashboard Page -->
+      <div id="dashboard" class="page page-active">
+        <!-- Progresso Geral -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <!-- Card de Nível de Progresso -->
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold text-gray-800">Nível de Progresso</h2>
+            <div class="flex justify-center mt-4">
+              <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center">
+                <span class="text-2xl font-bold text-blue-600">75%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card de Habilidades Desenvolvidas -->
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold text-gray-800">Habilidades Desenvolvidas</h2>
+            <div class="mt-4">
+              <div class="flex justify-between mb-2">
+                <span>Liderança</span>
+                <span class="text-blue-600">80%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-blue-600 h-2 rounded-full" style="width: 80%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card de Metas Alcançadas -->
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold text-gray-800">Metas Alcançadas</h2>
+            <div class="mt-4">
+              <div class="flex justify-between mb-2">
+                <span>Promoção</span>
+                <span class="text-blue-600">3/5</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-blue-600 h-2 rounded-full" style="width: 60%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mural de Atividades Atuais -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <!-- Seção de Habilidades -->
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Habilidades em Desenvolvimento</h2>
+            <div class="space-y-4">
+              <!-- Atividade 1 -->
+              <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+                <span class="text-gray-700">Curso de Liderança</span>
+                <span class="text-sm text-blue-600">80% concluído</span>
+              </div>
+              <!-- Atividade 2 -->
+              <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+                <span class="text-gray-700">Workshop de Gestão de Tempo</span>
+                <span class="text-sm text-blue-600">50% concluído</span>
+              </div>
+              <!-- Botão para Adicionar Atividade -->
+              <button onclick="showPage('habilidades')" class="w-full p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+                + Adicionar Atividade
+              </button>
+            </div>
+          </div>
+
+          <!-- Seção de Metas -->
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Metas em Andamento</h2>
+            <div class="space-y-4">
+              <!-- Meta 1 -->
+              <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+                <span class="text-gray-700">Atingir Meta de Vendas</span>
+                <span class="text-sm text-green-600">75% concluído</span>
+              </div>
+              <!-- Meta 2 -->
+              <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+                <span class="text-gray-700">Concluir Projeto X</span>
+                <span class="text-sm text-green-600">40% concluído</span>
+              </div>
+              <!-- Botão para Adicionar Meta -->
+              <button onclick="showPage('metas')" class="w-full p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">
+                + Adicionar Meta
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seção para Adicionar Mais Tópicos -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-lg font-semibold text-gray-800 mb-4">Outros Tópicos</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Tópico 1: Cursos -->
+            <div class="p-4 bg-purple-50 rounded-lg">
+              <h3 class="text-md font-semibold text-gray-800">Cursos</h3>
+              <p class="text-sm text-gray-600">Adicione cursos para aprimorar suas habilidades.</p>
+              <button onclick="showPage('habilidades')" class="mt-2 p-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition duration-300">
+                + Adicionar Curso
+              </button>
+            </div>
+            <!-- Tópico 2: Feedback -->
+            <div class="p-4 bg-yellow-50 rounded-lg">
+              <h3 class="text-md font-semibold text-gray-800">Feedback</h3>
+              <p class="text-sm text-gray-600">Solicite feedback para melhorar seu desempenho.</p>
+              <button class="mt-2 p-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition duration-300">
+                + Solicitar Feedback
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Página de Metas -->
+      <div id="metas" class="page">
+        <!-- Seção de Metas Ativas -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+          <h2 class="text-lg font-semibold text-gray-800 mb-4">Metas Ativas</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Meta 1 -->
+            <div class="p-4 bg-blue-50 rounded-lg flex flex-col h-64">
+              <div class="flex-1">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <span class="text-gray-700">Promoção para Gerente</span>
+                    <p class="text-sm text-gray-600">Concluir cursos e atingir KPIs</p>
+                  </div>
+                  <span class="text-sm text-blue-600">60% concluído</span>
+                </div>
+                <div class="mt-4">
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full" style="width: 60%;"></div>
+                  </div>
+                </div>
+                <!-- Detalhes da Meta -->
+                <div class="mt-4 space-y-2">
+                  <div class="p-2 bg-blue-100 rounded-lg">
+                    <span class="text-sm text-gray-700">Curso de Liderança concluído</span>
+                  </div>
+                  <div class="p-2 bg-blue-100 rounded-lg">
+                    <span class="text-sm text-gray-700">KPI de vendas atingido</span>
+                  </div>
+                  <div class="p-2 bg-blue-100 rounded-lg">
+                    <span class="text-sm text-gray-700">Feedback positivo da equipe</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-auto">
+                <button class="w-full p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+                  Ver Detalhes
+                </button>
+              </div>
+            </div>
+            <!-- Meta 2 -->
+            <div class="p-4 bg-blue-50 rounded-lg flex flex-col h-64">
+              <div class="flex-1">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <span class="text-gray-700">Certificação em Gestão de Projetos</span>
+                    <p class="text-sm text-gray-600">Estudar e passar no exame</p>
+                  </div>
+                  <span class="text-sm text-blue-600">40% concluído</span>
+                </div>
+                <div class="mt-4">
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full" style="width: 40%;"></div>
+                  </div>
+                </div>
+                <!-- Detalhes da Meta -->
+                <div class="mt-4 space-y-2">
+                  <div class="p-2 bg-blue-100 rounded-lg">
+                    <span class="text-sm text-gray-700">Módulo 1 concluído</span>
+                  </div>
+                  <div class="p-2 bg-blue-100 rounded-lg">
+                    <span class="text-sm text-gray-700">Simulado realizado</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-auto">
+                <button class="w-full p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+                  Ver Detalhes
+                </button>
+              </div>
+            </div>
+            <!-- Meta 3 -->
+            <div class="p-4 bg-blue-50 rounded-lg flex flex-col h-64">
+              <div class="flex-1">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <span class="text-gray-700">Aprender Inglês Avançado</span>
+                    <p class="text-sm text-gray-600">Completar curso e praticar conversação</p>
+                  </div>
+                  <span class="text-sm text-blue-600">25% concluído</span>
+                </div>
+                <div class="mt-4">
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full" style="width: 25%;"></div>
+                  </div>
+                </div>
+                <!-- Detalhes da Meta -->
+                <div class="mt-4 space-y-2">
+                  <div class="p-2 bg-blue-100 rounded-lg">
+                    <span class="text-sm text-gray-700">Aula 1 concluída</span>
+                  </div>
+                  <div class="p-2 bg-blue-100 rounded-lg">
+                    <span class="text-sm text-gray-700">Prática de conversação iniciada</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-auto">
+                <button class="w-full p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+                  Ver Detalhes
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- Botão para Adicionar Meta -->
+          <button onclick="showAddGoalForm()" class="w-full p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 mt-6">
+            + Adicionar Meta
+          </button>
+        </div>
+
+        <!-- Seção de Metas Concluídas -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+          <h2 class="text-lg font-semibold text-gray-800 mb-4">Metas Concluídas</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Meta 1 -->
+            <div class="p-4 bg-green-50 rounded-lg flex flex-col h-64">
+              <div class="flex-1">
+                <div>
+                  <span class="text-gray-700">Certificação em Marketing Digital</span>
+                  <p class="text-sm text-gray-600">Concluído em 15/10/2023</p>
+                </div>
+                <span class="text-sm text-green-600">100% concluído</span>
+              </div>
+              <div class="mt-4">
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="bg-green-600 h-2 rounded-full" style="width: 100%;"></div>
+                </div>
+              </div>
+              <!-- Detalhes da Meta -->
+              <div class="mt-4 space-y-2">
+                <div class="p-2 bg-green-100 rounded-lg">
+                  <span class="text-sm text-gray-700">Módulo 1 e 2 concluídos</span>
+                </div>
+                <div class="p-2 bg-green-100 rounded-lg">
+                  <span class="text-sm text-gray-700">Projeto final apresentado</span>
+                </div>
+              </div>
+            </div>
+            <!-- Meta 2 -->
+            <div class="p-4 bg-green-50 rounded-lg flex flex-col h-64">
+              <div class="flex-1">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <span class="text-gray-700">Curso de Liderança</span>
+                    <p class="text-sm text-gray-600">Concluído em 30/09/2023</p>
+                  </div>
+                  <span class="text-sm text-green-600">100% concluído</span>
+                </div>
+                <div class="mt-4">
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-green-600 h-2 rounded-full" style="width: 100%;"></div>
+                  </div>
+                </div>
+                <!-- Detalhes da Meta -->
+                <div class="mt-4 space-y-2">
+                  <div class="p-2 bg-green-100 rounded-lg">
+                    <span class="text-sm text-gray-700">Aulas 1 a 5 concluídas</span>
+                  </div>
+                  <div class="p-2 bg-green-100 rounded-lg">
+                    <span class="text-sm text-gray-700">Feedback positivo do instrutor</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Página de Habilidades -->
+      <div id="habilidades" class="page">
+        <!-- Formulário para Adicionar Habilidade -->
+        <div class="bg-white p-6 rounded-lg shadow mb-8">
+          <h3 class="text-xl font-semibold mb-4">Adicionar Nova Habilidade</h3>
+          <form id="addSkillForm" class="space-y-4">
+            <div>
+              <label for="skillName" class="block text-sm font-medium text-gray-700">Nome da Habilidade</label>
+              <input type="text" id="skillName" name="skillName" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+            </div>
+            <div>
+              <label for="skillCategory" class="block text-sm font-medium text-gray-700">Categoria</label>
+              <select id="skillCategory" name="skillCategory" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                <option value="Técnicas">Técnicas</option>
+                <option value="Comportamentais">Comportamentais</option>
+                <option value="Liderança">Liderança</option>
+              </select>
+            </div>
+            <div>
+              <label for="skillLevel" class="block text-sm font-medium text-gray-700">Nível de Proficiência</label>
+              <select id="skillLevel" name="skillLevel" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                <option value="Iniciante">Iniciante</option>
+                <option value="Intermediário">Intermediário</option>
+                <option value="Avançado">Avançado</option>
+              </select>
+            </div>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Adicionar</button>
+          </form>
+        </div>
+
+        <!-- Lista de Habilidades -->
+        <div class="bg-white p-6 rounded-lg shadow">
+          <h3 class="text-xl font-semibold mb-4">Minhas Habilidades</h3>
+          <div id="skillsList" class="space-y-4">
+            <!-- Habilidades serão preenchidas dinamicamente via JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Página de Mentorias -->
+      <div id="mentorias" class="page">
+        <!-- Seção de Mentorias Ativas -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+          <h2 class="text-lg font-semibold text-gray-800 mb-4">Mentorias Ativas</h2>
+          <div class="space-y-4">
+            <!-- Mentoria 1 -->
+            <div class="p-4 bg-blue-50 rounded-lg">
+              <div class="flex items-center justify-between cursor-pointer" onclick="toggleCollapse('mentoria1')">
+                <div>
+                  <span class="text-gray-700">Mentoria com Maria Silva</span>
+                  <p class="text-sm text-gray-600">Foco em Liderança e Gestão de Equipes</p>
+                </div>
+                <span class="text-sm text-blue-600">2 encontros restantes</span>
+              </div>
+              <!-- Checklist -->
+              <div id="mentoria1" class="collapse-content mt-4">
+                <div class="space-y-2">
+                  <!-- Tarefa 1 -->
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                      <input type="checkbox" class="custom-checkbox">
+                      <span class="text-gray-700">Preparar apresentação de liderança</span>
+                    </div>
+                    <button class="p-1 bg-red-500 text-white rounded hover:bg-red-600">Remover</button>
+                  </div>
+                  <!-- Tarefa 2 -->
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                      <input type="checkbox" class="custom-checkbox">
+                      <span class="text-gray-700">Revisar feedback do último encontro</span>
+                    </div>
+                    <button class="p-1 bg-red-500 text-white rounded hover:bg-red-600">Remover</button>
+                  </div>
+                  <button class="w-full p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">
+                    + Adicionar Tarefa
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Mentoria 2 -->
+            <div class="p-4 bg-blue-50 rounded-lg">
+              <div class="flex items-center justify-between cursor-pointer" onclick="toggleCollapse('mentoria2')">
+                <div>
+                  <span class="text-gray-700">Mentoria com Carlos Oliveira</span>
+                  <p class="text-sm text-gray-600">Desenvolvimento de Carreira e Networking</p>
+                </div>
+                <span class="text-sm text-blue-600">5 encontros restantes</span>
+              </div>
+              <!-- Checklist -->
+              <div id="mentoria2" class="collapse-content mt-4">
+                <div class="space-y-2">
+                  <!-- Tarefa 1 -->
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                      <input type="checkbox" class="custom-checkbox">
+                      <span class="text-gray-700">Atualizar currículo</span>
+                    </div>
+                    <button class="p-1 bg-red-500 text-white rounded hover:bg-red-600">Remover</button>
+                  </div>
+                  <!-- Tarefa 2 -->
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                      <input type="checkbox" class="custom-checkbox">
+                      <span class="text-gray-700">Participar de evento de networking</span>
+                    </div>
+                    <button class="p-1 bg-red-500 text-white rounded hover:bg-red-600">Remover</button>
+                  </div>
+                  <button class="w-full p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">
+                    + Adicionar Tarefa
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Botão para Adicionar Mentoria -->
+            <button onclick="showAddMentoringForm()" class="w-full p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+              + Adicionar Mentoria
+            </button>
+          </div>
+        </div>
+
+        <!-- Seção de Mentorias Concluídas -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+          <h2 class="text-lg font-semibold text-gray-800 mb-4">Mentorias Concluídas</h2>
+          <div class="space-y-4">
+            <!-- Mentoria 1 -->
+            <div class="p-4 bg-green-50 rounded-lg">
+              <div class="flex items-center justify-between cursor-pointer" onclick="toggleCollapse('mentoria3')">
+                <div>
+                  <span class="text-gray-700">Mentoria com Ana Costa</span>
+                  <p class="text-sm text-gray-600">Gestão de Projetos e Metodologias Ágeis</p>
+                </div>
+                <span class="text-sm text-green-600">Concluída</span>
+              </div>
+              <!-- Checklist -->
+              <div id="mentoria3" class="collapse-content mt-4">
+                <div class="space-y-2">
+                  <!-- Tarefa 1 -->
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                      <input type="checkbox" class="custom-checkbox">
+                      <span class="text-gray-700">Finalizar curso de Scrum</span>
+                    </div>
+                    <button class="p-1 bg-red-500 text-white rounded hover:bg-red-600">Remover</button>
+                  </div>
+                  <!-- Tarefa 2 -->
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                      <input type="checkbox" class="custom-checkbox">
+                      <span class="text-gray-700">Apresentar projeto final</span>
+                    </div>
+                    <button class="p-1 bg-red-500 text-white rounded hover:bg-red-600">Remover</button>
+                  </div>
+                  <button class="w-full p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">
+                    + Adicionar Tarefa
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Mentoria 2 -->
+            <div class="p-4 bg-green-50 rounded-lg">
+              <div class="flex items-center justify-between cursor-pointer" onclick="toggleCollapse('mentoria4')">
+                <div>
+                  <span class="text-gray-700">Mentoria com Pedro Santos</span>
+                  <p class="text-sm text-gray-600">Comunicação Eficaz e Oratória</p>
+                </div>
+                <span class="text-sm text-green-600">Concluída</span>
+              </div>
+              <!-- Checklist -->
+              <div id="mentoria4" class="collapse-content mt-4">
+                <div class="space-y-2">
+                  <!-- Tarefa 1 -->
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                      <input type="checkbox" class="custom-checkbox">
+                      <span class="text-gray-700">Praticar discurso final</span>
+                    </div>
+                    <button class="p-1 bg-red-500 text-white rounded hover:bg-red-600">Remover</button>
+                  </div>
+                  <!-- Tarefa 2 -->
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                      <input type="checkbox" class="custom-checkbox">
+                      <span class="text-gray-700">Gravar vídeo de apresentação</span>
+                    </div>
+                    <button class="p-1 bg-red-500 text-white rounded hover:bg-red-600">Remover</button>
+                  </div>
+                  <button class="w-full p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">
+                    + Adicionar Tarefa
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seção para Avaliações de Mentorias -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-lg font-semibold text-gray-800 mb-4">Avaliações de Mentorias</h2>
+          <div class="space-y-4">
+            <!-- Avaliação 1 -->
+            <div class="p-4 bg-yellow-50 rounded-lg">
+              <h3 class="text-md font-semibold text-gray-800">Mentoria com Ana Costa</h3>
+              <p class="text-sm text-gray-600">Avalie sua experiência com a mentoria.</p>
+              <div class="mt-2 flex space-x-2">
+                <button class="p-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition duration-300">
+                  Avaliar
+                </button>
+              </div>
+            </div>
+            <!-- Avaliação 2 -->
+            <div class="p-4 bg-yellow-50 rounded-lg">
+              <h3 class="text-md font-semibold text-gray-800">Mentoria com Pedro Santos</h3>
+              <p class="text-sm text-gray-600">Avalie sua experiência com a mentoria.</p>
+              <div class="mt-2 flex space-x-2">
+                <button class="p-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition duration-300">
+                  Avaliar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal para Adicionar Meta -->
+  <div id="addGoalModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+    <div class="bg-white p-6 rounded-lg w-96">
+      <h3 class="text-xl font-semibold mb-4">Adicionar Nova Meta</h3>
+      <form id="addGoalForm" class="space-y-4">
+        <div>
+          <label for="goalTitle" class="block text-sm font-medium text-gray-700">Título da Meta</label>
+          <input type="text" id="goalTitle" name="goalTitle" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+        </div>
+        <div>
+          <label for="goalDescription" class="block text-sm font-medium text-gray-700">Descrição</label>
+          <textarea id="goalDescription" name="goalDescription" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required></textarea>
+        </div>
+        <div>
+          <label for="goalDeadline" class="block text-sm font-medium text-gray-700">Prazo</label>
+          <input type="date" id="goalDeadline" name="goalDeadline" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+        </div>
+        <div class="flex justify-end space-x-2">
+          <button type="button" onclick="closeAddGoalForm()" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">Cancelar</button>
+          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Adicionar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal para Adicionar Mentoria -->
+  <div id="addMentoringModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+    <div class="bg-white p-6 rounded-lg w-96">
+      <h3 class="text-xl font-semibold mb-4">Adicionar Nova Mentoria</h3>
+      <form id="addMentoringForm" class="space-y-4">
+        <div>
+          <label for="mentoringMentor" class="block text-sm font-medium text-gray-700">Nome do Mentor</label>
+          <input type="text" id="mentoringMentor" name="mentoringMentor" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+        </div>
+        <div>
+          <label for="mentoringFocus" class="block text-sm font-medium text-gray-700">Foco da Mentoria</label>
+          <input type="text" id="mentoringFocus" name="mentoringFocus" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+        </div>
+        <div>
+          <label for="mentoringSessions" class="block text-sm font-medium text-gray-700">Número de Encontros</label>
+          <input type="number" id="mentoringSessions" name="mentoringSessions" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+        </div>
+        <div class="flex justify-end space-x-2">
+          <button type="button" onclick="closeAddMentoringForm()" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">Cancelar</button>
+          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Adicionar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Sistema de Navegação
+    function showPage(pageId) {
+      // Esconde todas as páginas
+      document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('page-active');
+      });
+      
+      // Mostra a página selecionada
+      document.getElementById(pageId).classList.add('page-active');
+    }
+
+    // Função para expandir/colapsar os checklists
+    function toggleCollapse(id) {
+      const content = document.getElementById(id);
+      content.classList.toggle('active');
+    }
+
+    // Sistema de Habilidades (mantido do arquivo original)
+    let skills = [];
+    let editIndex = null;
+
+    document.getElementById('addSkillForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const skillName = document.getElementById('skillName').value;
+      const skillCategory = document.getElementById('skillCategory').value;
+      const skillLevel = document.getElementById('skillLevel').value;
+
+      const newSkill = {
+        name: skillName,
+        category: skillCategory,
+        level: skillLevel
+      };
+
+      skills.push(newSkill);
+      renderSkills();
+      document.getElementById('addSkillForm').reset();
+    });
+
+    function renderSkills() {
+      const skillsList = document.getElementById('skillsList');
+      skillsList.innerHTML = '';
+
+      skills.forEach((skill, index) => {
+        const skillItem = document.createElement('div');
+        skillItem.className = 'p-4 border border-gray-200 rounded-lg';
+
+        skillItem.innerHTML = `
+          <div class="flex justify-between items-center">
+            <div>
+              <h4 class="font-semibold">${skill.name}</h4>
+              <p class="text-sm text-gray-600">Categoria: ${skill.category}</p>
+              <p class="text-sm text-gray-600">Nível: ${skill.level}</p>
+            </div>
+            <div class="flex space-x-2">
+              <button onclick="editSkill(${index})" class="text-blue-500 hover:text-blue-700">Editar</button>
+              <button onclick="removeSkill(${index})" class="text-red-500 hover:text-red-700">Remover</button>
+            </div>
+          </div>
+        `;
+
+        skillsList.appendChild(skillItem);
+      });
+    }
+
+    function editSkill(index) {
+      editIndex = index;
+      const skill = skills[index];
+      // Aqui você pode implementar a edição similar ao original
+      alert(`Editar habilidade: ${skill.name}`);
+    }
+
+    function removeSkill(index) {
+      skills.splice(index, 1);
+      renderSkills();
+    }
+
+    // Inicializar habilidades
+    skills = [
+      { name: 'Desenvolvimento Front-end', category: 'Técnicas', level: 'Intermediário' },
+      { name: 'Comunicação Eficaz', category: 'Comportamentais', level: 'Avançado' }
+    ];
+    renderSkills();
+
+    // Funções para modais de metas e mentorias
+    function showAddGoalForm() {
+      document.getElementById('addGoalModal').classList.remove('hidden');
+    }
+
+    function closeAddGoalForm() {
+      document.getElementById('addGoalModal').classList.add('hidden');
+    }
+
+    function showAddMentoringForm() {
+      document.getElementById('addMentoringModal').classList.remove('hidden');
+    }
+
+    function closeAddMentoringForm() {
+      document.getElementById('addMentoringModal').classList.add('hidden');
+    }
+
+    // Formulários de metas e mentorias
+    document.getElementById('addGoalForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Meta adicionada com sucesso!');
+      closeAddGoalForm();
+    });
+
+    document.getElementById('addMentoringForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Mentoria adicionada com sucesso!');
+      closeAddMentoringForm();
+    });
+  </script>
+</body>
+</html>

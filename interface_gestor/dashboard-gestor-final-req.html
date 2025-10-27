@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FacilitaRH - Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ... (manter os estilos anteriores) ... */
+    
+    /* Novos estilos para loading e estados */
+    .loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    
+    .btn-loading {
+      position: relative;
+      color: transparent;
+    }
+    
+    .btn-loading::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: 50%;
+      left: 50%;
+      margin-left: -8px;
+      margin-top: -8px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      border-right-color: transparent;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .error-message {
+      background-color: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .success-message {
+      background-color: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #16a34a;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar (manter igual) -->
+    <div class="sidebar bg-indigo-800 text-white flex flex-col">
+      <!-- ... (código da sidebar igual) ... -->
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- Header -->
+      <header class="bg-white shadow-sm">
+        <div class="flex items-center justify-between p-4">
+          <h1 id="pageTitle" class="text-2xl font-bold text-gray-800">Dashboard do Gestor</h1>
+          <div class="flex items-center space-x-4">
+            <!-- Notificações e busca -->
+            <div class="relative">
+              <i class="fas fa-bell text-gray-500 hover:text-indigo-600 cursor-pointer"></i>
+              <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+            </div>
+            <div class="relative">
+              <input type="text" placeholder="Pesquisar..." class="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Área de Mensagens -->
+      <div id="messageArea" class="mx-6 mt-4"></div>
+
+      <!-- Páginas -->
+      <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page page-active">
+          <!-- Conteúdo do dashboard (manter igual) -->
+        </div>
+
+        <!-- Página de Funcionários -->
+        <div id="employees" class="page">
+          <!-- Conteúdo dos funcionários (manter igual) -->
+        </div>
+
+        <!-- Página de Configurações -->
+        <div id="settings" class="page">
+          <!-- Conteúdo das configurações (manter igual) -->
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modais (manter estrutura similar, mas atualizar os scripts) -->
+
+  <script>
+    // =============================================
+    // CONFIGURAÇÃO DA API
+    // =============================================
+    const API_CONFIG = {
+      BASE_URL: 'http://localhost:3000/api', // Ajuste para sua URL
+      ENDPOINTS: {
+        EMPLOYEES: '/employees',
+        GOALS: '/goals',
+        TRAININGS: '/trainings',
+        EVALUATIONS: '/evaluations',
+        DASHBOARD: '/dashboard'
+      },
+      HEADERS: {
+        'Content-Type': 'application/json',
+        // 'Authorization': 'Bearer ' + localStorage.getItem('token') // Para autenticação
+      }
+    };
+
+    // =============================================
+    // SERVIÇOS DA API
+    // =============================================
+    const ApiService = {
+      // Função genérica para requests
+      async request(endpoint, options = {}) {
+        const url = `${API_CONFIG.BASE_URL}${endpoint}`;
+        const config = {
+          headers: API_CONFIG.HEADERS,
+          ...options
+        };
+
+        try {
+          this.showLoading();
+          const response = await fetch(url, config);
+          
+          if (!response.ok) {
+            throw new Error(`Erro ${response.status}: ${response.statusText}`);
+          }
+          
+          return await response.json();
+        } catch (error) {
+          console.error('Erro na requisição:', error);
+          this.showMessage('Erro ao carregar dados: ' + error.message, 'error');
+          throw error;
+        } finally {
+          this.hideLoading();
+        }
+      },
+
+      // Employees
+      async getEmployees() {
+        return this.request(API_CONFIG.ENDPOINTS.EMPLOYEES);
+      },
+
+      async getEmployee(id) {
+        return this.request(`${API_CONFIG.ENDPOINTS.EMPLOYEES}/${id}`);
+      },
+
+      async createEmployee(data) {
+        return this.request(API_CONFIG.ENDPOINTS.EMPLOYEES, {
+          method: 'POST',
+          body: JSON.stringify(data)
+        });
+      },
+
+      async updateEmployee(id, data) {
+        return this.request(`${API_CONFIG.ENDPOINTS.EMPLOYEES}/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify(data)
+        });
+      },
+
+      async deleteEmployee(id) {
+        return this.request(`${API_CONFIG.ENDPOINTS.EMPLOYEES}/${id}`, {
+          method: 'DELETE'
+        });
+      },
+
+      // Goals
+      async getEmployeeGoals(employeeId) {
+        return this.request(`${API_CONFIG.ENDPOINTS.EMPLOYEES}/${employeeId}${API_CONFIG.ENDPOINTS.GOALS}`);
+      },
+
+      async createGoal(employeeId, data) {
+        return this.request(`${API_CONFIG.ENDPOINTS.EMPLOYEES}/${employeeId}${API_CONFIG.ENDPOINTS.GOALS}`, {
+          method: 'POST',
+          body: JSON.stringify(data)
+        });
+      },
+
+      async updateGoal(employeeId, goalId, data) {
+        return this.request(`${API_CONFIG.ENDPOINTS.EMPLOYEES}/${employeeId}${API_CONFIG.ENDPOINTS.GOALS}/${goalId}`, {
+          method: 'PUT',
+          body: JSON.stringify(data)
+        });
+      },
+
+      async deleteGoal(employeeId, goalId) {
+        return this.request(`${API_CONFIG.ENDPOINTS.EMPLOYEES}/${employeeId}${API_CONFIG.ENDPOINTS.GOALS}/${goalId}`, {
+          method: 'DELETE'
+        });
+      },
+
+      // Trainings
+      async getEmployeeTrainings(employeeId) {
+        return this.request(`${API_CONFIG.ENDPOINTS.EMPLOYEES}/${employeeId}${API_CONFIG.ENDPOINTS.TRAININGS}`);
+      },
+
+      async createTraining(employeeId, data) {
+        return this.request(`${API_CONFIG.ENDPOINTS.EMPLOYEES}/${employeeId}${API_CONFIG.ENDPOINTS.TRAININGS}`, {
+          method: 'POST',
+          body: JSON.stringify(data)
+        });
+      },
+
+      async updateTraining(employeeId, trainingId, data) {
+        return this.request(`${API_CONFIG.ENDPOINTS.EMPLOYEES}/${employeeId}${API_CONFIG.ENDPOINTS.TRAININGS}/${trainingId}`, {
+          method: 'PUT',
+          body: JSON.stringify(data)
+        });
+      },
+
+      async deleteTraining(employeeId, trainingId) {
+        return this.request(`${API_CONFIG.ENDPOINTS.EMPLOYEES}/${employeeId}${API_CONFIG.ENDPOINTS.TRAININGS}/${trainingId}`, {
+          method: 'DELETE'
+        });
+      },
+
+      // Dashboard
+      async getDashboardData() {
+        return this.request(API_CONFIG.ENDPOINTS.DASHBOARD);
+      },
+
+      // Utilitários
+      showLoading() {
+        document.body.classList.add('loading');
+      },
+
+      hideLoading() {
+        document.body.classList.remove('loading');
+      },
+
+      showMessage(message, type = 'info') {
+        const messageArea = document.getElementById('messageArea');
+        const messageClass = type === 'error' ? 'error-message' : 
+                            type === 'success' ? 'success-message' : 'bg-blue-50 border-blue-200 text-blue-800';
+        
+        messageArea.innerHTML = `
+          <div class="${messageClass}">
+            <div class="flex justify-between items-center">
+              <span>${message}</span>
+              <button onclick="this.parentElement.parentElement.remove()" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+        `;
+        
+        // Auto-remove após 5 segundos
+        setTimeout(() => {
+          if (messageArea.innerHTML.includes(message)) {
+            messageArea.innerHTML = '';
+          }
+        }, 5000);
+      }
+    };
+
+    // =============================================
+    // GERENCIAMENTO DE ESTADO
+    // =============================================
+    const AppState = {
+      employees: [],
+      currentEmployee: null,
+      dashboardData: null,
+      
+      async initialize() {
+        try {
+          await this.loadDashboardData();
+          await this.loadEmployees();
+        } catch (error) {
+          console.error('Erro ao inicializar app:', error);
+        }
+      },
+
+      async loadDashboardData() {
+        this.dashboardData = await ApiService.getDashboardData();
+        this.updateDashboardUI();
+      },
+
+      async loadEmployees() {
+        this.employees = await ApiService.getEmployees();
+        this.updateEmployeesUI();
+      },
+
+      async loadEmployeeDetails(id) {
+        this.currentEmployee = await ApiService.getEmployee(id);
+        return this.currentEmployee;
+      },
+
+      updateDashboardUI() {
+        if (!this.dashboardData) return;
+        
+        // Atualizar cards do dashboard
+        const totalEmployees = document.querySelector('.bg-white.rounded-xl.shadow-md:nth-child(1) h3');
+        if (totalEmployees) {
+          totalEmployees.textContent = this.dashboardData.totalEmployees || '0';
+        }
+        
+        // Atualizar gráficos
+        this.updateCharts();
+      },
+
+      updateEmployeesUI() {
+        // Atualizar tabela e cards de funcionários
+        this.initEmployeeTable();
+        this.initEmployeeCards();
+      },
+
+      updateCharts() {
+        // Atualizar gráficos com dados reais
+        if (this.dashboardData && this.dashboardData.performanceData) {
+          // Implementar atualização dos gráficos
+        }
+      }
+    };
+
+    // =============================================
+    // FUNÇÕES ADAPTADAS PARA API
+    // =============================================
+
+    // Inicializar tabela de funcionários
+    async function initEmployeeTable() {
+      const tableBody = document.getElementById('employeeTableBody');
+      if (!tableBody) return;
+
+      try {
+        const employees = await ApiService.getEmployees();
+        tableBody.innerHTML = '';
+        
+        employees.slice(0, 5).forEach(emp => {
+          const row = createEmployeeTableRow(emp);
+          tableBody.appendChild(row);
+        });
+        
+        this.updatePaginationInfo(1, 5, employees.length);
+      } catch (error) {
+        console.error('Erro ao carregar tabela de funcionários:', error);
+      }
+    }
+
+    function createEmployeeTableRow(employee) {
+      const row = document.createElement('tr');
+      row.className = 'hover:bg-gray-50';
+      
+      const progressRing = createProgressRing(employee.progresso);
+      const statusBadge = createStatusBadge(employee.status);
+      
+      row.innerHTML = `
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="flex items-center">
+            <div class="flex-shrink-0 h-10 w-10">
+              <img class="h-10 w-10 rounded-full" src="${employee.foto || 'https://via.placeholder.com/40'}" alt="${employee.nome}">
+            </div>
+            <div class="ml-4">
+              <div class="text-sm font-medium text-gray-900">${employee.nome}</div>
+              <div class="text-sm text-gray-500">${employee.departamento}</div>
+            </div>
+          </div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="text-sm text-gray-900">${employee.cargo}</div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="flex items-center">
+            ${progressRing}
+            <div class="ml-2 w-20">
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-green-500 h-2 rounded-full" style="width: ${employee.progresso}%"></div>
+              </div>
+            </div>
+          </div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          ${statusBadge}
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+          <button onclick="showEmployeeDetails(${employee.id})" class="text-indigo-600 hover:text-indigo-900 mr-3">
+            <i class="fas fa-eye"></i>
+          </button>
+          <button onclick="editEmployee(${employee.id})" class="text-blue-600 hover:text-blue-900 mr-3">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button onclick="deleteEmployee(${employee.id})" class="text-red-600 hover:text-red-900">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </td>
+      `;
+      
+      return row;
+    }
+
+    // Mostrar detalhes do funcionário (adaptado para API)
+    async function showEmployeeDetails(id) {
+      try {
+        const employee = await ApiService.getEmployee(id);
+        if (employee) {
+          currentEmployeeId = id;
+          
+          // Preencher informações básicas
+          document.getElementById('employeeModalTitle').textContent = `Detalhes de ${employee.nome}`;
+          document.getElementById('employeeModalName').textContent = employee.nome;
+          document.getElementById('employeeModalRole').textContent = employee.cargo;
+          document.getElementById('employeeModalPhoto').src = employee.foto || 'https://via.placeholder.com/150';
+          document.getElementById('employeeModalDept').textContent = employee.departamento;
+          document.getElementById('employeeModalEmail').textContent = employee.email;
+          
+          // Formatando data de admissão
+          const hireDate = new Date(employee.admissao);
+          document.getElementById('employeeModalHireDate').textContent = hireDate.toLocaleDateString('pt-BR');
+          
+          // Status
+          const statusBadge = document.getElementById('employeeModalStatus');
+          statusBadge.textContent = employee.status === 'ativo' ? 'Ativo' : 'Inativo';
+          statusBadge.className = `px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${employee.status === 'ativo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+          
+          // Carregar metas, treinamentos e avaliações
+          await loadEmployeeGoals(employee.id);
+          await loadEmployeeTrainings(employee.id);
+          await loadEmployeeEvaluations(employee.id);
+          
+          // Mostrar modal
+          document.getElementById('employeeDetailsModal').classList.remove('hidden');
+          showEmployeeTab('goals');
+        }
+      } catch (error) {
+        ApiService.showMessage('Erro ao carregar detalhes do funcionário', 'error');
+      }
+    }
+
+    // Carregar metas do funcionário (adaptado para API)
+    async function loadEmployeeGoals(employeeId) {
+      const goalsList = document.getElementById('goalsList');
+      goalsList.innerHTML = '<p class="text-gray-500 text-center py-4">Carregando metas...</p>';
+      
+      try {
+        const goals = await ApiService.getEmployeeGoals(employeeId);
+        goalsList.innerHTML = '';
+        
+        if (goals.length === 0) {
+          goalsList.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma meta atribuída</p>';
+          return;
+        }
+        
+        goals.forEach(meta => {
+          const goalElement = createGoalElement(employeeId, meta);
+          goalsList.appendChild(goalElement);
+        });
+      } catch (error) {
+        goalsList.innerHTML = '<p class="text-red-500 text-center py-4">Erro ao carregar metas</p>';
+      }
+    }
+
+    function createGoalElement(employeeId, meta) {
+      const goalElement = document.createElement('div');
+      goalElement.className = 'border border-gray-200 rounded-lg p-4';
+      goalElement.innerHTML = `
+        <div class="flex justify-between items-start">
+          <div class="flex-1">
+            <h4 class="font-medium">${meta.titulo}</h4>
+            <p class="text-sm text-gray-500 mt-1">${meta.descricao}</p>
+          </div>
+          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${meta.status === 'Concluído' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+            ${meta.status}
+          </span>
+        </div>
+        <div class="mt-3">
+          <div class="flex justify-between text-sm text-gray-500 mb-1">
+            <span>Progresso</span>
+            <span>${meta.progresso}%</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="${meta.status === 'Concluído' ? 'bg-green-500' : 'bg-blue-500'} h-2 rounded-full" style="width: ${meta.progresso}%"></div>
+          </div>
+        </div>
+        <div class="flex justify-between mt-2 text-sm text-gray-500">
+          <span>Prazo: ${new Date(meta.prazo).toLocaleDateString('pt-BR')}</span>
+          <span>Prioridade: ${meta.prioridade}</span>
+        </div>
+        <div class="flex justify-end mt-3 space-x-2">
+          <button onclick="editGoal(${employeeId}, ${meta.id})" class="text-blue-600 hover:text-blue-800 text-sm">
+            <i class="fas fa-edit mr-1"></i> Editar
+          </button>
+          <button onclick="deleteGoal(${employeeId}, ${meta.id})" class="text-red-600 hover:text-red-800 text-sm">
+            <i class="fas fa-trash-alt mr-1"></i> Remover
+          </button>
+        </div>
+      `;
+      return goalElement;
+    }
+
+    // Função para criar meta (adaptada para API)
+    async function submitGoal() {
+      const title = document.getElementById('goalTitle').value;
+      const description = document.getElementById('goalDescription').value;
+      const deadline = document.getElementById('goalDeadline').value;
+      const progress = parseInt(document.getElementById('goalProgress').value);
+      const priority = document.getElementById('goalPriority').value;
+      
+      if (!title || !description || !deadline) {
+        ApiService.showMessage('Por favor, preencha todos os campos obrigatórios.', 'error');
+        return;
+      }
+      
+      const goalData = {
+        titulo: title,
+        descricao: description,
+        prazo: deadline,
+        progresso: progress,
+        prioridade: priority
+      };
+      
+      try {
+        if (isEditingGoal) {
+          await ApiService.updateGoal(currentEmployeeId, currentGoalId, goalData);
+          ApiService.showMessage('Meta atualizada com sucesso!', 'success');
+        } else {
+          await ApiService.createGoal(currentEmployeeId, goalData);
+          ApiService.showMessage('Meta criada com sucesso!', 'success');
+        }
+        
+        // Recarregar a lista de metas
+        await loadEmployeeGoals(currentEmployeeId);
+        closeNewGoalForm();
+      } catch (error) {
+        ApiService.showMessage('Erro ao salvar meta: ' + error.message, 'error');
+      }
+    }
+
+    // Função para deletar meta (adaptada para API)
+    async function deleteGoal(employeeId, goalId) {
+      if (!confirm('Tem certeza que deseja remover esta meta?')) return;
+      
+      try {
+        await ApiService.deleteGoal(employeeId, goalId);
+        ApiService.showMessage('Meta removida com sucesso!', 'success');
+        await loadEmployeeGoals(employeeId);
+      } catch (error) {
+        ApiService.showMessage('Erro ao remover meta: ' + error.message, 'error');
+      }
+    }
+
+    // Funções utilitárias
+    function createProgressRing(progress) {
+      return `
+        <svg class="w-8 h-8" viewBox="0 0 36 36">
+          <circle cx="18" cy="18" r="16" fill="none" class="stroke-gray-200" stroke-width="2"></circle>
+          <circle cx="18" cy="18" r="16" fill="none" class="stroke-green-500" stroke-width="2"
+            stroke-dasharray="100"
+            stroke-dashoffset="${100 - progress}">
+          </circle>
+          <text x="18" y="20" text-anchor="middle" class="text-xs font-bold">${progress}%</text>
+        </svg>
+      `;
+    }
+
+    function createStatusBadge(status) {
+      const isActive = status === 'ativo';
+      const className = isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+      const text = isActive ? 'Ativo' : 'Inativo';
+      
+      return `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${className}">${text}</span>`;
+    }
+
+    function updatePaginationInfo(start, end, total) {
+      const startItem = document.getElementById('startItem');
+      const endItem = document.getElementById('endItem');
+      const totalItems = document.getElementById('totalItems');
+      
+      if (startItem) startItem.textContent = start;
+      if (endItem) endItem.textContent = end;
+      if (totalItems) totalItems.textContent = total;
+    }
+
+    // =============================================
+    // INICIALIZAÇÃO DA APLICAÇÃO
+    // =============================================
+    document.addEventListener('DOMContentLoaded', async function() {
+      try {
+        // Inicializar estado da aplicação
+        await AppState.initialize();
+        
+        // Configurar navegação
+        setupPageNavigation();
+        
+        // Mostrar página inicial
+        showPage('dashboard');
+        
+        ApiService.showMessage('Sistema carregado com sucesso!', 'success');
+      } catch (error) {
+        ApiService.showMessage('Erro ao inicializar o sistema', 'error');
+      }
+    });
+
+    // ... (manter as outras funções de navegação, modais, etc.)
+  </script>
+</body>
+</html>
