@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plano de Carreira</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .page {
+      display: none;
+    }
+    .page-active {
+      display: block;
+    }
+    .collapse-content {
+      display: none;
+    }
+    .collapse-content.active {
+      display: block;
+    }
+    .custom-checkbox {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #3b82f6;
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+    }
+    .custom-checkbox:checked {
+      background-color: #3b82f6;
+    }
+    .custom-checkbox:checked::after {
+      content: "✔";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 10px;
+    }
+    .loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans">
+  <!-- Header -->
+  <!-- Substituir o header atual por este: -->
+  <header class="bg-white shadow-md p-4 flex justify-between items-center">
+      <div class="flex items-center space-x-4">
+          <h1 class="text-2xl font-bold text-blue-600">Meu Plano de Carreira</h1>
+      </div>
+      <div class="flex items-center space-x-4">
+          <span class="text-gray-700" id="userName">Carregando...</span>
+          <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold" id="userAvatar">
+              J
+          </div>
+          <button 
+              onclick="logout()" 
+              class="text-sm text-gray-500 hover:text-red-600 transition duration-300"
+              title="Sair"
+          >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+              </svg>
+          </button>
+      </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-md p-4">
+      <nav>
+        <ul class="space-y-2">
+          <li><a href="#" onclick="showPage('dashboard')" class="text-gray-700 hover:text-blue-600">Dashboard</a></li>
+          <li><a href="#" onclick="showPage('metas')" class="text-gray-700 hover:text-blue-600">Metas</a></li>
+          <li><a href="#" onclick="showPage('habilidades')" class="text-gray-700 hover:text-blue-600">Habilidades</a></li>
+          <li><a href="#" onclick="showPage('mentorias')" class="text-gray-700 hover:text-blue-600">Mentorias</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Páginas -->
+    <main class="flex-1 p-6">
+      <!-- Dashboard Page -->
+      <div id="dashboard" class="page page-active">
+        <!-- Progresso Geral -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <!-- Card de Nível de Progresso -->
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold text-gray-800">Nível de Progresso</h2>
+            <div class="flex justify-center mt-4">
+              <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center">
+                <span class="text-2xl font-bold text-blue-600" id="progressoGeral">75%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card de Habilidades Desenvolvidas -->
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold text-gray-800">Habilidades Desenvolvidas</h2>
+            <div class="mt-4">
+              <div class="flex justify-between mb-2">
+                <span>Progresso Geral</span>
+                <span class="text-blue-600" id="habilidadesProgresso">80%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-blue-600 h-2 rounded-full" id="progressoHabilidadesBar" style="width: 80%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card de Metas Alcançadas -->
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold text-gray-800">Metas Alcançadas</h2>
+            <div class="mt-4">
+              <div class="flex justify-between mb-2">
+                <span>Conclusão</span>
+                <span class="text-blue-600" id="metasConcluidas">3/5</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-blue-600 h-2 rounded-full" id="progressoMetasBar" style="width: 60%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mural de Atividades Atuais -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <!-- Seção de Habilidades -->
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Habilidades em Desenvolvimento</h2>
+            <div class="space-y-4" id="habilidadesDesenvolvimento">
+              <!-- Conteúdo dinâmico -->
+            </div>
+            <!-- Botão para Adicionar Atividade -->
+            <button onclick="showPage('habilidades')" class="w-full p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 mt-4">
+              + Adicionar Atividade
+            </button>
+          </div>
+
+          <!-- Seção de Metas -->
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Metas em Andamento</h2>
+            <div class="space-y-4" id="metasAndamento">
+              <!-- Conteúdo dinâmico -->
+            </div>
+            <!-- Botão para Adicionar Meta -->
+            <button onclick="showPage('metas')" class="w-full p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300 mt-4">
+              + Adicionar Meta
+            </button>
+          </div>
+        </div>
+
+        <!-- Seção para Adicionar Mais Tópicos -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-lg font-semibold text-gray-800 mb-4">Outros Tópicos</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Tópico 1: Cursos -->
+            <div class="p-4 bg-purple-50 rounded-lg">
+              <h3 class="text-md font-semibold text-gray-800">Cursos</h3>
+              <p class="text-sm text-gray-600">Adicione cursos para aprimorar suas habilidades.</p>
+              <button onclick="showPage('habilidades')" class="mt-2 p-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition duration-300">
+                + Adicionar Curso
+              </button>
+            </div>
+            <!-- Tópico 2: Feedback -->
+            <div class="p-4 bg-yellow-50 rounded-lg">
+              <h3 class="text-md font-semibold text-gray-800">Feedback</h3>
+              <p class="text-sm text-gray-600">Solicite feedback para melhorar seu desempenho.</p>
+              <button class="mt-2 p-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition duration-300">
+                + Solicitar Feedback
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Página de Metas -->
+      <div id="metas" class="page">
+        <!-- Seção de Metas Ativas -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+          <h2 class="text-lg font-semibold text-gray-800 mb-4">Metas Ativas</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="metasAtivasContainer">
+            <!-- Metas serão carregadas dinamicamente via JavaScript -->
+          </div>
+          <!-- Botão para Adicionar Meta -->
+          <button onclick="showAddGoalForm()" class="w-full p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 mt-6">
+            + Adicionar Meta
+          </button>
+        </div>
+
+        <!-- Seção de Metas Concluídas -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+          <h2 class="text-lg font-semibold text-gray-800 mb-4">Metas Concluídas</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="metasConcluidasContainer">
+            <!-- Metas serão carregadas dinamicamente via JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Página de Habilidades -->
+      <div id="habilidades" class="page">
+        <!-- Formulário para Adicionar Habilidade -->
+        <div class="bg-white p-6 rounded-lg shadow mb-8">
+          <h3 class="text-xl font-semibold mb-4" id="formTitle">Adicionar Nova Habilidade</h3>
+          <form id="addSkillForm" class="space-y-4">
+            <div>
+              <label for="skillName" class="block text-sm font-medium text-gray-700">Nome da Habilidade</label>
+              <input type="text" id="skillName" name="skillName" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+            </div>
+            <div>
+              <label for="skillCategory" class="block text-sm font-medium text-gray-700">Categoria</label>
+              <select id="skillCategory" name="skillCategory" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                <option value="Técnicas">Técnicas</option>
+                <option value="Comportamentais">Comportamentais</option>
+                <option value="Liderança">Liderança</option>
+                <option value="Gestão">Gestão</option>
+                <option value="Tecnologia">Tecnologia</option>
+              </select>
+            </div>
+            <div>
+              <label for="skillLevel" class="block text-sm font-medium text-gray-700">Nível de Proficiência</label>
+              <select id="skillLevel" name="skillLevel" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+                <option value="Iniciante">Iniciante</option>
+                <option value="Intermediário">Intermediário</option>
+                <option value="Avançado">Avançado</option>
+                <option value="Especialista">Especialista</option>
+              </select>
+            </div>
+            <div>
+              <label for="skillDescription" class="block text-sm font-medium text-gray-700">Descrição (opcional)</label>
+              <textarea id="skillDescription" name="skillDescription" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" rows="3" placeholder="Descreva como você aplica esta habilidade..."></textarea>
+            </div>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300" id="submitButton">
+              Adicionar Habilidade
+            </button>
+            <button type="button" onclick="cancelEdit()" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition duration-300 hidden" id="cancelButton">
+              Cancelar Edição
+            </button>
+          </form>
+        </div>
+
+        <!-- Lista de Habilidades -->
+        <div class="bg-white p-6 rounded-lg shadow">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-semibold">Minhas Habilidades</h3>
+            <span class="text-sm text-gray-500" id="skillsCount">0 habilidades</span>
+          </div>
+          <div id="skillsList" class="space-y-4">
+            <!-- Habilidades serão preenchidas dinamicamente via JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Página de Mentorias -->
+      <div id="mentorias" class="page">
+        <!-- Seção de Mentorias Ativas -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+          <h2 class="text-lg font-semibold text-gray-800 mb-4">Mentorias Ativas</h2>
+          <div class="space-y-4" id="mentoriasAtivasContainer">
+            <!-- Mentorias serão carregadas dinamicamente via JavaScript -->
+          </div>
+          <!-- Botão para Adicionar Mentoria -->
+          <button onclick="showAddMentoringForm()" class="w-full p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+            + Adicionar Mentoria
+          </button>
+        </div>
+
+        <!-- Seção de Mentorias Concluídas -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+          <h2 class="text-lg font-semibold text-gray-800 mb-4">Mentorias Concluídas</h2>
+          <div class="space-y-4" id="mentoriasConcluidasContainer">
+            <!-- Mentorias serão carregadas dinamicamente via JavaScript -->
+          </div>
+        </div>
+
+        <!-- Seção para Avaliações de Mentorias -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-lg font-semibold text-gray-800 mb-4">Avaliações de Mentorias</h2>
+          <div class="space-y-4" id="avaliacoesMentorias">
+            <!-- Avaliações serão carregadas dinamicamente via JavaScript -->
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal para Adicionar Meta -->
+  <div id="addGoalModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg w-96">
+      <h3 class="text-xl font-semibold mb-4">Adicionar Nova Meta</h3>
+      <form id="addGoalForm" class="space-y-4">
+        <div>
+          <label for="goalTitle" class="block text-sm font-medium text-gray-700">Título da Meta</label>
+          <input type="text" id="goalTitle" name="goalTitle" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+        </div>
+        <div>
+          <label for="goalDescription" class="block text-sm font-medium text-gray-700">Descrição</label>
+          <textarea id="goalDescription" name="goalDescription" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required></textarea>
+        </div>
+        <div>
+          <label for="goalDeadline" class="block text-sm font-medium text-gray-700">Prazo</label>
+          <input type="date" id="goalDeadline" name="goalDeadline" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+        </div>
+        <div class="flex justify-end space-x-2">
+          <button type="button" onclick="closeAddGoalForm()" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">Cancelar</button>
+          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Adicionar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal para Adicionar Mentoria -->
+  <div id="addMentoringModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg w-96">
+      <h3 class="text-xl font-semibold mb-4">Adicionar Nova Mentoria</h3>
+      <form id="addMentoringForm" class="space-y-4">
+        <div>
+          <label for="mentoringMentor" class="block text-sm font-medium text-gray-700">Nome do Mentor</label>
+          <input type="text" id="mentoringMentor" name="mentoringMentor" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+        </div>
+        <div>
+          <label for="mentoringFocus" class="block text-sm font-medium text-gray-700">Foco da Mentoria</label>
+          <input type="text" id="mentoringFocus" name="mentoringFocus" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+        </div>
+        <div>
+          <label for="mentoringSessions" class="block text-sm font-medium text-gray-700">Número de Encontros</label>
+          <input type="number" id="mentoringSessions" name="mentoringSessions" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+        </div>
+        <div class="flex justify-end space-x-2">
+          <button type="button" onclick="closeAddMentoringForm()" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">Cancelar</button>
+          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Adicionar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts de API -->
+  <script src="mock-backend.js"></script>
+  <script src="api-service-funcionario.js"></script>
+
+  <script>
+    // SISTEMA INTEGRADO COM API - DASHBOARD FUNCIONÁRIO
+
+    // Variáveis globais
+    let metas = [];
+    let habilidades = [];
+    let mentorias = [];
+    let editIndex = null;
+
+    // =============================================
+    // SISTEMA DE NAVEGAÇÃO
+    // =============================================
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(page => {
+            page.classList.remove('page-active');
+        });
+        document.getElementById(pageId).classList.add('page-active');
+        
+        // Carregar dados específicos da página
+        if (pageId === 'metas') {
+            loadMetas();
+        } else if (pageId === 'habilidades') {
+            loadHabilidades();
+        } else if (pageId === 'mentorias') {
+            loadMentorias();
+        } else if (pageId === 'dashboard') {
+            loadDashboardStats();
+        }
+    }
+
+    // =============================================
+    // SISTEMA DE METAS (INTEGRADO COM API)
+    // =============================================
+    async function loadMetas() {
+        try {
+            showLoading(true);
+            metas = await apiServiceFuncionario.getMinhasMetas();
+            renderMetas();
+            updateDashboardActivities();
+        } catch (error) {
+            console.error('Erro ao carregar metas:', error);
+            showMessage('Erro ao carregar metas: ' + error.message, 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    function renderMetas() {
+        const metasAtivasContainer = document.getElementById('metasAtivasContainer');
+        const metasConcluidasContainer = document.getElementById('metasConcluidasContainer');
+        
+        if (!metasAtivasContainer || !metasConcluidasContainer) return;
+        
+        // Limpar containers
+        metasAtivasContainer.innerHTML = '';
+        metasConcluidasContainer.innerHTML = '';
+        
+        const metasAtivas = metas.filter(meta => meta.status === 'em_andamento');
+        const metasConcluidas = metas.filter(meta => meta.status === 'concluido');
+        
+        // Renderizar metas ativas
+        metasAtivas.forEach((meta, index) => {
+            const metaElement = createMetaElement(meta, index, 'ativa');
+            metasAtivasContainer.appendChild(metaElement);
+        });
+        
+        // Renderizar metas concluídas
+        metasConcluidas.forEach((meta, index) => {
+            const metaElement = createMetaElement(meta, index, 'concluida');
+            metasConcluidasContainer.appendChild(metaElement);
+        });
+        
+        // Adicionar mensagem se não houver metas
+        if (metasAtivas.length === 0) {
+            metasAtivasContainer.innerHTML = `
+                <div class="col-span-3 text-center py-8">
+                    <p class="text-gray-500">Nenhuma meta ativa</p>
+                    <button onclick="showAddGoalForm()" class="mt-4 p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        + Adicionar Primeira Meta
+                    </button>
+                </div>
+            `;
+        }
+        
+        if (metasConcluidas.length === 0) {
+            metasConcluidasContainer.innerHTML = `
+                <div class="col-span-3 text-center py-8">
+                    <p class="text-gray-500">Nenhuma meta concluída</p>
+                </div>
+            `;
+        }
+    }
+
+    function createMetaElement(meta, index, tipo) {
+        const element = document.createElement('div');
+        element.className = 'p-4 bg-blue-50 rounded-lg flex flex-col h-64';
+        
+        const isConcluida = tipo === 'concluida';
+        const bgColor = isConcluida ? 'bg-green-50' : 'bg-blue-50';
+        const textColor = isConcluida ? 'text-green-600' : 'text-blue-600';
+        const progressColor = isConcluida ? 'bg-green-600' : 'bg-blue-600';
+        
+        element.innerHTML = `
+            <div class="flex-1">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="text-gray-700 font-medium">${meta.titulo}</span>
+                        <p class="text-sm text-gray-600 mt-1">${meta.descricao}</p>
+                    </div>
+                    <span class="text-sm ${textColor}">${meta.progresso}% concluído</span>
+                </div>
+                <div class="mt-4">
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="${progressColor} h-2 rounded-full" style="width: ${meta.progresso}%;"></div>
+                    </div>
+                </div>
+                <div class="mt-4 space-y-2">
+                    ${meta.tarefas ? meta.tarefas.slice(0, 3).map(tarefa => `
+                        <div class="p-2 ${isConcluida ? 'bg-green-100' : 'bg-blue-100'} rounded-lg">
+                            <span class="text-sm text-gray-700">${tarefa.descricao}</span>
+                            ${tarefa.concluida ? '<span class="text-xs text-green-600 ml-2">✓</span>' : ''}
+                        </div>
+                    `).join('') : ''}
+                </div>
+            </div>
+            <div class="mt-auto flex space-x-2">
+                <button onclick="editarMeta(${index})" class="flex-1 p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    Editar
+                </button>
+                ${!isConcluida ? `
+                <button onclick="concluirMeta(${index})" class="flex-1 p-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                    Concluir
+                </button>
+                ` : ''}
+            </div>
+        `;
+        
+        return element;
+    }
+
+    // =============================================
+    // SISTEMA DE HABILIDADES (INTEGRADO COM API)
+    // =============================================
+    async function loadHabilidades() {
+        try {
+            showLoading(true);
+            habilidades = await apiServiceFuncionario.getMinhasHabilidades();
+            renderHabilidades();
+            updateDashboardActivities();
+        } catch (error) {
+            console.error('Erro ao carregar habilidades:', error);
+            showMessage('Erro ao carregar habilidades: ' + error.message, 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    function renderHabilidades() {
+        const skillsList = document.getElementById('skillsList');
+        if (!skillsList) return;
+        
+        skillsList.innerHTML = '';
+        
+        habilidades.forEach((habilidade, index) => {
+            const skillItem = document.createElement('div');
+            skillItem.className = 'p-4 border border-gray-200 rounded-lg bg-gray-50';
+            
+            skillItem.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-lg text-gray-800">${habilidade.nome}</h4>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">${habilidade.categoria}</span>
+                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">${habilidade.nivel}</span>
+                            <span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">${habilidade.progresso}%</span>
+                        </div>
+                        ${habilidade.descricao ? `<p class="text-sm text-gray-600 mt-2">${habilidade.descricao}</p>` : ''}
+                        <div class="mt-2 w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-purple-600 h-2 rounded-full" style="width: ${habilidade.progresso}%"></div>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2 ml-4">
+                        <button onclick="editarHabilidade(${index})" class="text-blue-500 hover:text-blue-700 px-3 py-1 border border-blue-500 rounded-md hover:bg-blue-50">Editar</button>
+                        <button onclick="removerHabilidade(${index})" class="text-red-500 hover:text-red-700 px-3 py-1 border border-red-500 rounded-md hover:bg-red-50">Remover</button>
+                    </div>
+                </div>
+            `;
+            
+            skillsList.appendChild(skillItem);
+        });
+        
+        updateSkillsCount();
+    }
+    
+    // =============================================
+    // SISTEMA DE AUTENTICAÇÃO
+    // =============================================
+
+    function checkAuth() {
+        const user = JSON.parse(localStorage.getItem('loggedInUser'));
+        if (!user) {
+            window.location.href = 'login.html';
+            return null;
+        }
+        return user;
+    }
+
+    function updateUserInfo() {
+        const user = checkAuth();
+        if (user) {
+            document.getElementById('userName').textContent = `Olá, ${user.name.split(' ')[0]}!`;
+            document.getElementById('userAvatar').textContent = user.name.charAt(0);
+        }
+    }
+
+    function logout() {
+        if (confirm('Deseja realmente sair?')) {
+            localStorage.removeItem('loggedInUser');
+            window.location.href = 'login.html';
+        }
+    }
+
+    // =============================================
+    // INICIALIZAÇÃO ATUALIZADA
+    // =============================================
+    document.addEventListener('DOMContentLoaded', function() {
+        // Verificar autenticação
+        const user = checkAuth();
+        if (!user) return;
+
+        // Atualizar informações do usuário
+        updateUserInfo();
+
+        // Configurar funcionário ID baseado no usuário logado
+        if (window.apiServiceFuncionario) {
+            window.apiServiceFuncionario.funcionarioId = user.id;
+        }
+
+        // Carregar dados iniciais
+        loadDashboardStats();
+        loadMetas();
+        loadHabilidades();
+        loadMentorias();
+        
+        // Configurar formulários
+        setupFormHandlers();
+    });
+
+
+    // =============================================
+    // SISTEMA DE MENTORIAS (INTEGRADO COM API)
+    // =============================================
+    async function loadMentorias() {
+        try {
+            showLoading(true);
+            mentorias = await apiServiceFuncionario.getMinhasMentorias();
+            renderMentorias();
+        } catch (error) {
+            console.error('Erro ao carregar mentorias:', error);
+            showMessage('Erro ao carregar mentorias: ' + error.message, 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    function renderMentorias() {
+        const mentoriasAtivasContainer = document.getElementById('mentoriasAtivasContainer');
+        const mentoriasConcluidasContainer = document.getElementById('mentoriasConcluidasContainer');
+        
+        if (!mentoriasAtivasContainer || !mentoriasConcluidasContainer) return;
+        
+        mentoriasAtivasContainer.innerHTML = '';
+        mentoriasConcluidasContainer.innerHTML = '';
+        
+        const mentoriasAtivas = mentorias.filter(m => m.status === 'ativa');
+        const mentoriasConcluidas = mentorias.filter(m => m.status === 'concluida');
+        
+        mentoriasAtivas.forEach((mentoria, index) => {
+            const mentoriaElement = createMentoriaElement(mentoria, index, 'ativa');
+            mentoriasAtivasContainer.appendChild(mentoriaElement);
+        });
+        
+        mentoriasConcluidas.forEach((mentoria, index) => {
+            const mentoriaElement = createMentoriaElement(mentoria, index, 'concluida');
+            mentoriasConcluidasContainer.appendChild(mentoriaElement);
+        });
+    }
+
+    function createMentoriaElement(mentoria, index, tipo) {
+        const element = document.createElement('div');
+        element.className = `p-4 ${tipo === 'ativa' ? 'bg-blue-50' : 'bg-green-50'} rounded-lg`;
+        
+        element.innerHTML = `
+            <div class="flex items-center justify-between cursor-pointer" onclick="toggleCollapse('mentoria${index}')">
+                <div>
+                    <span class="text-gray-700 font-medium">Mentoria com ${mentoria.mentor}</span>
+                    <p class="text-sm text-gray-600">${mentoria.foco}</p>
+                </div>
+                <span class="text-sm ${tipo === 'ativa' ? 'text-blue-600' : 'text-green-600'}">
+                    ${tipo === 'ativa' ? `${mentoria.encontrosRestantes} encontros restantes` : 'Concluída'}
+                </span>
+            </div>
+            <div id="mentoria${index}" class="collapse-content mt-4">
+                <div class="space-y-2">
+                    ${mentoria.tarefas.map(tarefa => `
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <input type="checkbox" class="custom-checkbox" ${tarefa.concluida ? 'checked' : ''} 
+                                    onchange="toggleTarefaMentoria(${index}, '${tarefa.id}')">
+                                <span class="text-gray-700 ${tarefa.concluida ? 'line-through text-gray-400' : ''}">${tarefa.descricao}</span>
+                            </div>
+                            <button class="p-1 bg-red-500 text-white rounded hover:bg-red-600" 
+                                onclick="removerTarefaMentoria(${index}, '${tarefa.id}')">Remover</button>
+                        </div>
+                    `).join('')}
+                    <button class="w-full p-2 bg-green-600 text-white rounded-lg hover:bg-green-700" 
+                        onclick="adicionarTarefaMentoria(${index})">+ Adicionar Tarefa</button>
+                </div>
+            </div>
+        `;
+        
+        return element;
+    }
+
+    // =============================================
+    // DASHBOARD INTEGRADO
+    // =============================================
+    async function loadDashboardStats() {
+        try {
+            const stats = await apiServiceFuncionario.getDashboardStats();
+            
+            // Atualizar cards do dashboard
+            document.getElementById('progressoGeral').textContent = `${stats.progressoGeral}%`;
+            document.getElementById('habilidadesProgresso').textContent = `${stats.habilidadesProgresso}%`;
+            document.getElementById('metasConcluidas').textContent = stats.metasConcluidas;
+            
+            // Atualizar barras de progresso
+            document.getElementById('progressoHabilidadesBar').style.width = `${stats.habilidadesProgresso}%`;
+            document.getElementById('progressoMetasBar').style.width = `${stats.progressoGeral}%`;
+            
+        } catch (error) {
+            console.error('Erro ao carregar estatísticas do dashboard:', error);
+        }
+    }
+
+    function updateDashboardActivities() {
+        // Atualizar atividades no dashboard
+        const habilidadesContainer = document.getElementById('habilidadesDesenvolvimento');
+        const metasContainer = document.getElementById('metasAndamento');
+        
+        if (habilidadesContainer) {
+            habilidadesContainer.innerHTML = habilidades.slice(0, 2).map(habilidade => `
+                <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+                    <span class="text-gray-700">${habilidade.nome}</span>
+                    <span class="text-sm text-blue-600">${habilidade.progresso}% concluído</span>
+                </div>
+            `).join('');
+        }
+        
+        if (metasContainer) {
+            metasContainer.innerHTML = metas.filter(meta => meta.status === 'em_andamento').slice(0, 2).map(meta => `
+                <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+                    <span class="text-gray-700">${meta.titulo}</span>
+                    <span class="text-sm text-green-600">${meta.progresso}% concluído</span>
+                </div>
+            `).join('');
+        }
+    }
+
+    // =============================================
+    // FUNÇÕES UTILITÁRIAS
+    // =============================================
+    function showLoading(show) {
+        const main = document.querySelector('main');
+        if (show) {
+            main.classList.add('loading');
+        } else {
+            main.classList.remove('loading');
+        }
+    }
+
+    function showMessage(message, type = 'success') {
+        // Criar um toast notification simples
+        const toast = document.createElement('div');
+        toast.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+            type === 'error' ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
+        }`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            document.body.removeChild(toast);
+        }, 3000);
+    }
+
+    function toggleCollapse(id) {
+        const content = document.getElementById(id);
+        content.classList.toggle('active');
+    }
+
+    function updateSkillsCount() {
+        const count = habilidades.length;
+        const skillsCount = document.getElementById('skillsCount');
+        if (skillsCount) {
+            skillsCount.textContent = `${count} habilidade${count !== 1 ? 's' : ''}`;
+        }
+    }
+
+    // =============================================
+    // INICIALIZAÇÃO
+    // =============================================
+    document.addEventListener('DOMContentLoaded', function() {
+        // Carregar dados iniciais
+        loadDashboardStats();
+        loadMetas();
+        loadHabilidades();
+        loadMentorias();
+        
+        // Configurar formulários
+        setupFormHandlers();
+    });
+
+    function setupFormHandlers() {
+        // Formulário de habilidades
+        const addSkillForm = document.getElementById('addSkillForm');
+        if (addSkillForm) {
+            addSkillForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                try {
+                    const formData = new FormData(this);
+                    const habilidadeData = {
+                        nome: formData.get('skillName'),
+                        categoria: formData.get('skillCategory'),
+                        nivel: formData.get('skillLevel'),
+                        descricao: formData.get('skillDescription')
+                    };
+                    
+                    if (editIndex === null) {
+                        const novaHabilidade = await apiServiceFuncionario.createHabilidade(habilidadeData);
+                        habilidades.push(novaHabilidade);
+                        showMessage('Habilidade adicionada com sucesso!');
+                    } else {
+                        await apiServiceFuncionario.updateHabilidade(habilidades[editIndex].id, habilidadeData);
+                        habilidades[editIndex] = { ...habilidades[editIndex], ...habilidadeData };
+                        showMessage('Habilidade atualizada com sucesso!');
+                        editIndex = null;
+                        resetForm();
+                    }
+                    
+                    renderHabilidades();
+                    await loadDashboardStats();
+                    this.reset();
+                    
+                } catch (error) {
+                    showMessage('Erro ao salvar habilidade: ' + error.message, 'error');
+                }
+            });
+        }
+        
+        // Formulário de metas
+        const addGoalForm = document.getElementById('addGoalForm');
+        if (addGoalForm) {
+            addGoalForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                try {
+                    const formData = new FormData(this);
+                    const metaData = {
+                        titulo: formData.get('goalTitle'),
+                        descricao: formData.get('goalDescription'),
+                        prazo: formData.get('goalDeadline'),
+                        prioridade: 'media'
+                    };
+                    
+                    await apiServiceFuncionario.createMeta(metaData);
+                    showMessage('Meta adicionada com sucesso!');
+                    closeAddGoalForm();
+                    await loadMetas();
+                    await loadDashboardStats();
+                    
+                } catch (error) {
+                    showMessage('Erro ao adicionar meta: ' + error.message, 'error');
+                }
+            });
+        }
+        
+        // Formulário de mentorias
+        const addMentoringForm = document.getElementById('addMentoringForm');
+        if (addMentoringForm) {
+            addMentoringForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                try {
+                    const formData = new FormData(this);
+                    const mentoriaData = {
+                        mentor: formData.get('mentoringMentor'),
+                        foco: formData.get('mentoringFocus'),
+                        encontrosRestantes: parseInt(formData.get('mentoringSessions'))
+                    };
+                    
+                    await apiServiceFuncionario.createMentoria(mentoriaData);
+                    showMessage('Mentoria adicionada com sucesso!');
+                    closeAddMentoringForm();
+                    await loadMentorias();
+                    await loadDashboardStats();
+                    
+                } catch (error) {
+                    showMessage('Erro ao adicionar mentoria: ' + error.message, 'error');
+                }
+            });
+        }
+    }
+
+    // =============================================
+    // FUNÇÕES DE INTERFACE (MODAIS E FORMULÁRIOS)
+    // =============================================
+    function showAddGoalForm() {
+        document.getElementById('addGoalModal').classList.remove('hidden');
+    }
+
+    function closeAddGoalForm() {
+        document.getElementById('addGoalModal').classList.add('hidden');
+        document.getElementById('addGoalForm').reset();
+    }
+
+    function showAddMentoringForm() {
+        document.getElementById('addMentoringModal').classList.remove('hidden');
+    }
+
+    function closeAddMentoringForm() {
+        document.getElementById('addMentoringModal').classList.add('hidden');
+        document.getElementById('addMentoringForm').reset();
+    }
+
+    function editarMeta(index) {
+        const meta = metas[index];
+        // Preencher formulário de edição (implementação básica)
+        document.getElementById('goalTitle').value = meta.titulo;
+        document.getElementById('goalDescription').value = meta.descricao;
+        document.getElementById('goalDeadline').value = meta.prazo;
+        showAddGoalForm();
+        // Aqui você precisaria adaptar para usar o mesmo formulário para edição
+        showMessage('Funcionalidade de edição em desenvolvimento');
+    }
+
+    function concluirMeta(index) {
+        if (confirm('Deseja marcar esta meta como concluída?')) {
+            metas[index].status = 'concluido';
+            metas[index].progresso = 100;
+            renderMetas();
+            loadDashboardStats();
+            showMessage('Meta concluída com sucesso!');
+        }
+    }
+
+    function editarHabilidade(index) {
+        editIndex = index;
+        const habilidade = habilidades[index];
+        
+        document.getElementById('skillName').value = habilidade.nome;
+        document.getElementById('skillCategory').value = habilidade.categoria;
+        document.getElementById('skillLevel').value = habilidade.nivel;
+        document.getElementById('skillDescription').value = habilidade.descricao || '';
+        
+        document.getElementById('formTitle').textContent = 'Editar Habilidade';
+        document.getElementById('submitButton').textContent = 'Atualizar Habilidade';
+        document.getElementById('cancelButton').classList.remove('hidden');
+        
+        document.getElementById('skillName').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function removerHabilidade(index) {
+        if (confirm('Tem certeza que deseja remover esta habilidade?')) {
+            habilidades.splice(index, 1);
+            renderHabilidades();
+            updateSkillsCount();
+            showMessage('Habilidade removida com sucesso!');
+        }
+    }
+
+    function toggleTarefaMentoria(mentoriaIndex, tarefaId) {
+        const mentoria = mentorias[mentoriaIndex];
+        const tarefa = mentoria.tarefas.find(t => t.id == tarefaId);
+        if (tarefa) {
+            tarefa.concluida = !tarefa.concluida;
+            renderMentorias();
+            showMessage('Tarefa atualizada!');
+        }
+    }
+
+    function removerTarefaMentoria(mentoriaIndex, tarefaId) {
+        if (confirm('Deseja remover esta tarefa?')) {
+            const mentoria = mentorias[mentoriaIndex];
+            mentoria.tarefas = mentoria.tarefas.filter(t => t.id != tarefaId);
+            renderMentorias();
+            showMessage('Tarefa removida!');
+        }
+    }
+
+    function adicionarTarefaMentoria(mentoriaIndex) {
+        const descricao = prompt('Digite a descrição da nova tarefa:');
+        if (descricao) {
+            const mentoria = mentorias[mentoriaIndex];
+            const novaTarefa = {
+                id: Date.now().toString(),
+                descricao: descricao,
+                concluida: false
+            };
+            mentoria.tarefas.push(novaTarefa);
+            renderMentorias();
+            showMessage('Tarefa adicionada!');
+        }
+    }
+
+    function resetForm() {
+        document.getElementById('addSkillForm').reset();
+        document.getElementById('formTitle').textContent = 'Adicionar Nova Habilidade';
+        document.getElementById('submitButton').textContent = 'Adicionar Habilidade';
+        document.getElementById('cancelButton').classList.add('hidden');
+    }
+
+    function cancelEdit() {
+        editIndex = null;
+        resetForm();
+    }
+  </script>
+</body>
+</html>

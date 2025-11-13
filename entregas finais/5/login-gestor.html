@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Gestor - FacilitaRH</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .login-bg {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            min-height: 100vh;
+        }
+        .card-glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="login-bg flex items-center justify-center p-4">
+    <div class="card-glass rounded-2xl p-8 w-full max-w-md">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <div class="w-16 h-16 bg-white rounded-xl flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-chart-line text-indigo-600 text-2xl"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-white mb-2">FacilitaRH</h1>
+            <p class="text-indigo-100">Dashboard Gestor - Acesso Restrito</p>
+        </div>
+
+        <!-- Formulário de Login -->
+        <form id="loginForm" class="space-y-6">
+            <div>
+                <label class="block text-white text-sm font-medium mb-2">E-mail</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                    placeholder="gestor@empresa.com"
+                    required
+                >
+            </div>
+
+            <div>
+                <label class="block text-white text-sm font-medium mb-2">Senha</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                    placeholder="••••••••"
+                    required
+                >
+            </div>
+
+            <button 
+                type="submit" 
+                class="w-full bg-white text-indigo-600 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition duration-300 focus:outline-none focus:ring-2 focus:ring-white"
+            >
+                Acessar Dashboard
+            </button>
+        </form>
+
+        <!-- Credenciais de Teste -->
+        <div class="mt-8 p-4 bg-white/10 rounded-lg">
+            <h3 class="text-white text-sm font-medium mb-3">Credenciais para teste:</h3>
+            <div class="text-indigo-100 text-sm space-y-2">
+                <div class="border-l-2 border-indigo-400 pl-3">
+                    <p><strong>Gestor RH:</strong> rh.gestor@empresa.com</p>
+                    <p><strong>Senha:</strong> 123456</p>
+                </div>
+                <div class="border-l-2 border-green-400 pl-3">
+                    <p><strong>Diretor:</strong> diretor@empresa.com</p>
+                    <p><strong>Senha:</strong> 123456</p>
+                </div>
+                <div class="border-l-2 border-purple-400 pl-3">
+                    <p><strong>Coordenador:</strong> coordenador@empresa.com</p>
+                    <p><strong>Senha:</strong> 123456</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Link para login de funcionário -->
+        <div class="mt-6 text-center">
+            <a href="login.html" class="text-indigo-200 hover:text-white text-sm transition duration-300">
+                ⬅️ Sou funcionário - Acessar meu plano de carreira
+            </a>
+        </div>
+
+        <!-- Mensagem de Erro -->
+        <div id="errorMessage" class="mt-4 p-3 bg-red-500/80 text-white rounded-lg hidden text-sm"></div>
+    </div>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        // Sistema de Login para Gestores
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Credenciais válidas para gestores
+            const validGestores = [
+                { 
+                    email: 'rh.gestor@empresa.com', 
+                    password: '123456', 
+                    name: 'João Silva',
+                    cargo: 'Gestor de RH',
+                    nivel: 'gestor',
+                    avatar: 'J'
+                },
+                { 
+                    email: 'diretor@empresa.com', 
+                    password: '123456', 
+                    name: 'Carlos Mendes',
+                    cargo: 'Diretor de Pessoas',
+                    nivel: 'diretor',
+                    avatar: 'C'
+                },
+                { 
+                    email: 'coordenador@empresa.com', 
+                    password: '123456', 
+                    name: 'Ana Costa',
+                    cargo: 'Coordenadora de RH',
+                    nivel: 'coordenador',
+                    avatar: 'A'
+                },
+                // Credenciais alternativas caso seu professor peça
+                { 
+                    email: 'admin@empresa.com', 
+                    password: 'admin123', 
+                    name: 'Administrador',
+                    cargo: 'Administrador do Sistema',
+                    nivel: 'admin',
+                    avatar: 'A'
+                },
+                { 
+                    email: 'gestor1@empresa.com', 
+                    password: 'gestor123', 
+                    name: 'Roberto Alves',
+                    cargo: 'Gestor de Talentos',
+                    nivel: 'gestor',
+                    avatar: 'R'
+                },
+                { 
+                    email: 'supervisor@empresa.com', 
+                    password: 'super123', 
+                    name: 'Patrícia Lima',
+                    cargo: 'Supervisora de RH',
+                    nivel: 'supervisor',
+                    avatar: 'P'
+                }
+            ];
+
+            const gestor = validGestores.find(cred => 
+                cred.email === email && cred.password === password
+            );
+
+            if (gestor) {
+                // Salvar dados do gestor no localStorage
+                localStorage.setItem('loggedInGestor', JSON.stringify({
+                    id: gestor.email === 'rh.gestor@empresa.com' ? 1001 : 
+                         gestor.email === 'diretor@empresa.com' ? 1002 :
+                         gestor.email === 'coordenador@empresa.com' ? 1003 :
+                         gestor.email === 'admin@empresa.com' ? 1004 :
+                         gestor.email === 'gestor1@empresa.com' ? 1005 : 1006,
+                    name: gestor.name,
+                    email: gestor.email,
+                    cargo: gestor.cargo,
+                    nivel: gestor.nivel,
+                    avatar: gestor.avatar,
+                    loginTime: new Date().toISOString(),
+                    isGestor: true
+                }));
+
+                // Redirecionar para o dashboard do gestor
+                window.location.href = 'dashboard_gestor_finais.html';
+            } else {
+                errorMessage.textContent = 'E-mail ou senha incorretos. Tente novamente.';
+                errorMessage.classList.remove('hidden');
+                
+                // Esconder mensagem após 3 segundos
+                setTimeout(() => {
+                    errorMessage.classList.add('hidden');
+                }, 3000);
+            }
+        });
+
+        // Preencher automaticamente para facilitar testes
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('email').value = 'rh.gestor@empresa.com';
+            document.getElementById('password').value = '123456';
+        });
+    </script>
+</body>
+</html>

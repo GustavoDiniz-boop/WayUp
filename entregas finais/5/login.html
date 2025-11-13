@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Plano de Carreira</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .login-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .card-glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="login-bg flex items-center justify-center p-4">
+    <div class="card-glass rounded-2xl p-8 w-full max-w-md">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-white mb-2">Plano de Carreira</h1>
+            <p class="text-blue-100">Faça login para acessar seu dashboard</p>
+        </div>
+
+        <!-- Formulário de Login -->
+        <form id="loginForm" class="space-y-6">
+            <div>
+                <label class="block text-white text-sm font-medium mb-2">E-mail</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    placeholder="seu.email@empresa.com"
+                    required
+                >
+            </div>
+
+            <div>
+                <label class="block text-white text-sm font-medium mb-2">Senha</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    placeholder="••••••••"
+                    required
+                >
+            </div>
+
+            <button 
+                type="submit" 
+                class="w-full bg-white text-blue-600 py-3 rounded-lg font-semibold hover:bg-blue-50 transition duration-300 focus:outline-none focus:ring-2 focus:ring-white"
+            >
+                Entrar
+            </button>
+        </form>
+
+        <!-- Credenciais de Teste -->
+        <div class="mt-8 p-4 bg-white/10 rounded-lg">
+            <h3 class="text-white text-sm font-medium mb-2">Credenciais para teste:</h3>
+            <div class="text-blue-100 text-sm space-y-1">
+                <p><strong>E-mail:</strong> joao.silva@empresa.com</p>
+                <p><strong>Senha:</strong> 123456</p>
+            </div>
+        </div>
+
+        <!-- Mensagem de Erro -->
+        <div id="errorMessage" class="mt-4 p-3 bg-red-500/80 text-white rounded-lg hidden text-sm"></div>
+    </div>
+
+    <script>
+        // Sistema de Login Simples
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Credenciais válidas
+            const validCredentials = [
+                { email: 'joao.silva@empresa.com', password: '123456', name: 'João Silva' },
+                { email: 'maria.santos@empresa.com', password: '123456', name: 'Maria Santos' },
+                { email: 'pedro.costa@empresa.com', password: '123456', name: 'Pedro Costa' }
+            ];
+
+            const user = validCredentials.find(cred => 
+                cred.email === email && cred.password === password
+            );
+
+            if (user) {
+                // Salvar dados do usuário no localStorage
+                localStorage.setItem('loggedInUser', JSON.stringify({
+                    id: user.email === 'joao.silva@empresa.com' ? 1 : 
+                        user.email === 'maria.santos@empresa.com' ? 2 : 3,
+                    name: user.name,
+                    email: user.email,
+                    loginTime: new Date().toISOString()
+                }));
+
+                // Redirecionar para o dashboard
+                window.location.href = 'dashboard_finais.html';
+            } else {
+                errorMessage.textContent = 'E-mail ou senha incorretos. Tente novamente.';
+                errorMessage.classList.remove('hidden');
+                
+                // Esconder mensagem após 3 segundos
+                setTimeout(() => {
+                    errorMessage.classList.add('hidden');
+                }, 3000);
+            }
+        });
+
+        // Preencher automaticamente para facilitar testes
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('email').value = 'joao.silva@empresa.com';
+            document.getElementById('password').value = '123456';
+        });
+    </script>
+</body>
+</html>
