@@ -1,0 +1,290 @@
+<!-- Modal Adicionar Funcionário -->
+<div id="addEmployeeModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white rounded-xl w-full max-w-2xl mx-4">
+    <div class="p-6 border-b border-gray-200">
+      <h3 class="text-xl font-semibold text-gray-800">Adicionar Novo Funcionário</h3>
+    </div>
+    <form id="addEmployeeForm" class="p-6 space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Nome Completo</label>
+          <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+          <input type="email" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Cargo</label>
+          <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+            <option value="">Selecione um cargo</option>
+            <option value="desenvolvedor">Desenvolvedor</option>
+            <option value="analista">Analista</option>
+            <option value="gerente">Gerente</option>
+            <option value="estagiario">Estagiário</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Departamento</label>
+          <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+            <option value="">Selecione um departamento</option>
+            <option value="ti">TI</option>
+            <option value="rh">RH</option>
+            <option value="vendas">Vendas</option>
+            <option value="marketing">Marketing</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Data de Admissão</label>
+          <input type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+          <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+            <option value="ativo">Ativo</option>
+            <option value="inativo">Inativo</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Foto (URL)</label>
+        <input type="url" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="https://...">
+      </div>
+    </form>
+    <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+      <button type="button" onclick="closeAddEmployeeForm()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-200">Cancelar</button>
+      <button type="submit" form="addEmployeeForm" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-200">Adicionar Funcionário</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Adicionar Meta -->
+<div id="addGoalModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white rounded-xl w-full max-w-2xl mx-4">
+    <div class="p-6 border-b border-gray-200">
+      <h3 class="text-xl font-semibold text-gray-800">Adicionar Nova Meta</h3>
+    </div>
+    <form id="addGoalForm" class="p-6 space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Título da Meta</label>
+        <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+        <textarea class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" rows="3" required></textarea>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Prazo</label>
+          <input type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Prioridade</label>
+          <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+            <option value="baixa">Baixa</option>
+            <option value="media">Média</option>
+            <option value="alta">Alta</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Funcionário</label>
+        <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+          <option value="">Selecione um funcionário</option>
+          <option value="1">João Silva - Desenvolvedor</option>
+          <option value="2">Maria Santos - Analista</option>
+          <option value="3">Pedro Costa - Gerente</option>
+        </select>
+      </div>
+    </form>
+    <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+      <button type="button" onclick="closeAddGoalForm()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-200">Cancelar</button>
+      <button type="submit" form="addGoalForm" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-200">Adicionar Meta</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Editar Meta -->
+<div id="editGoalModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white rounded-xl w-full max-w-2xl mx-4">
+    <div class="p-6 border-b border-gray-200">
+      <h3 class="text-xl font-semibold text-gray-800">Editar Meta</h3>
+    </div>
+    <form id="editGoalForm" class="p-6 space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Título da Meta</label>
+        <input type="text" id="editGoalTitle" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+        <textarea id="editGoalDescription" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" rows="3" required></textarea>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Prazo</label>
+          <input type="date" id="editGoalDeadline" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Progresso</label>
+          <input type="number" id="editGoalProgress" min="0" max="100" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Prioridade</label>
+          <select id="editGoalPriority" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+            <option value="baixa">Baixa</option>
+            <option value="media">Média</option>
+            <option value="alta">Alta</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+          <select id="editGoalStatus" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+            <option value="em_andamento">Em Andamento</option>
+            <option value="concluido">Concluído</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+        </div>
+      </div>
+    </form>
+    <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+      <button type="button" onclick="closeEditGoalForm()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-200">Cancelar</button>
+      <button type="submit" form="editGoalForm" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-200">Salvar Alterações</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Detalhes do Funcionário -->
+<div id="employeeDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white rounded-xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+    <div class="p-6 border-b border-gray-200">
+      <h3 class="text-xl font-semibold text-gray-800" id="employeeModalTitle">Detalhes do Funcionário</h3>
+    </div>
+    <div class="p-6">
+      <div class="flex items-start space-x-6 mb-6">
+        <img id="employeeModalPhoto" src="https://via.placeholder.com/150" alt="Foto" class="w-32 h-32 rounded-lg object-cover">
+        <div class="flex-1">
+          <h4 class="text-2xl font-bold text-gray-800" id="employeeModalName">Nome do Funcionário</h4>
+          <p class="text-lg text-gray-600" id="employeeModalRole">Cargo</p>
+          <div class="flex items-center space-x-4 mt-2">
+            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium" id="employeeModalDept">Departamento</span>
+            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium" id="employeeModalStatus">Status</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div>
+          <h5 class="text-lg font-semibold text-gray-800 mb-3">Informações Pessoais</h5>
+          <div class="space-y-2">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Email:</span>
+              <span class="font-medium" id="employeeModalEmail">email@empresa.com</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Data de Admissão:</span>
+              <span class="font-medium" id="employeeModalHireDate">01/01/2023</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Tempo de Empresa:</span>
+              <span class="font-medium">1 ano, 2 meses</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h5 class="text-lg font-semibold text-gray-800 mb-3">Desempenho</h5>
+          <div class="space-y-2">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Progresso Geral:</span>
+              <span class="font-medium">85%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Metas Concluídas:</span>
+              <span class="font-medium">12/15</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Última Avaliação:</span>
+              <span class="font-medium">4.5/5.0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Abas -->
+      <div class="border-b border-gray-200 mb-6">
+        <div class="flex space-x-8">
+          <button class="tab-button active" onclick="employees.showEmployeeTab('metas')">Metas</button>
+          <button class="tab-button" onclick="employees.showEmployeeTab('treinamentos')">Treinamentos</button>
+          <button class="tab-button" onclick="employees.showEmployeeTab('avaliacoes')">Avaliações</button>
+          <button class="tab-button" onclick="employees.showEmployeeTab('historico')">Histórico</button>
+        </div>
+      </div>
+
+      <!-- Conteúdo das Abas -->
+      <div id="employeeTabContent">
+        <div id="tabMetas" class="tab-content">
+          <div class="space-y-4" id="employeeGoalsList">
+            <!-- Metas do funcionário serão carregadas aqui -->
+          </div>
+        </div>
+        <div id="tabTreinamentos" class="tab-content hidden">
+          <div class="space-y-4">
+            <div class="border border-gray-200 rounded-lg p-4">
+              <h6 class="font-medium">Liderança e Gestão de Equipes</h6>
+              <p class="text-sm text-gray-500 mt-1">Concluído em 15/02/2024</p>
+              <div class="mt-2">
+                <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Concluído</span>
+              </div>
+            </div>
+            <div class="border border-gray-200 rounded-lg p-4">
+              <h6 class="font-medium">Comunicação Eficaz</h6>
+              <p class="text-sm text-gray-500 mt-1">Em andamento - 60% concluído</p>
+              <div class="mt-2">
+                <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">Em Andamento</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="tabAvaliacoes" class="tab-content hidden">
+          <div class="space-y-4">
+            <div class="border border-gray-200 rounded-lg p-4">
+              <h6 class="font-medium">Avaliação Trimestral Q4 2023</h6>
+              <p class="text-sm text-gray-500 mt-1">Concluída em 15/12/2023</p>
+              <div class="mt-2 flex justify-between items-center">
+                <span class="text-lg font-bold text-green-600">4.5/5.0</span>
+                <button class="text-indigo-600 hover:text-indigo-800 text-sm">Ver Detalhes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="tabHistorico" class="tab-content hidden">
+          <div class="space-y-3">
+            <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+              <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                <i class="fas fa-bullseye text-green-600 text-sm"></i>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm font-medium">Meta "Certificação AWS" concluída</p>
+                <p class="text-xs text-gray-500">15/02/2024</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+              <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <i class="fas fa-graduation-cap text-blue-600 text-sm"></i>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm font-medium">Treinamento de Liderança concluído</p>
+                <p class="text-xs text-gray-500">10/02/2024</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="p-6 border-t border-gray-200 flex justify-end">
+      <button type="button" onclick="closeEmployeeDetails()" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition duration-200">Fechar</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,142 @@
+<div class="page-active">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-gray-800">Configurações do Sistema</h2>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Configurações Gerais -->
+    <div class="bg-white rounded-xl shadow-md p-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Configurações Gerais</h3>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Nome da Empresa</label>
+          <input type="text" value="Tech Solutions Ltda" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Email de Contato</label>
+          <input type="email" value="rh@techsolutions.com" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Fuso Horário</label>
+          <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option selected>America/Sao_Paulo (BRT)</option>
+            <option>UTC</option>
+            <option>America/New_York</option>
+          </select>
+        </div>
+        <button class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+          Salvar Configurações
+        </button>
+      </div>
+    </div>
+
+    <!-- Configurações de Notificações -->
+    <div class="bg-white rounded-xl shadow-md p-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Notificações</h3>
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-800">Notificações por Email</p>
+            <p class="text-xs text-gray-500">Receber alertas importantes</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" class="sr-only peer" checked>
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+          </label>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-800">Lembretes de Metas</p>
+            <p class="text-xs text-gray-500">Alertas de prazos próximos</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" class="sr-only peer" checked>
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+          </label>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-800">Novos Treinamentos</p>
+            <p class="text-xs text-gray-500">Notificar sobre novos cursos</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" class="sr-only peer" checked>
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+          </label>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-800">Avaliações Pendentes</p>
+            <p class="text-xs text-gray-500">Lembretes de avaliações</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" class="sr-only peer" checked>
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Configurações de Segurança -->
+    <div class="bg-white rounded-xl shadow-md p-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Segurança</h3>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Alterar Senha</label>
+          <input type="password" placeholder="Nova senha" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-2">
+          <input type="password" placeholder="Confirmar senha" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+        
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-800">Autenticação em Dois Fatores</p>
+            <p class="text-xs text-gray-500">Aumentar a segurança da conta</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" class="sr-only peer">
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+          </label>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Sessão Ativa</label>
+          <p class="text-sm text-gray-600">Sua sessão expira em: <span class="font-medium">2 horas</span></p>
+        </div>
+
+        <button class="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition duration-200">
+          <i class="fas fa-sign-out-alt mr-2"></i>Encerrar Todas as Sessões
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Backup e Exportação -->
+  <div class="bg-white rounded-xl shadow-md p-6 mt-6">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">Backup e Exportação</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <h4 class="text-md font-medium text-gray-800 mb-3">Backup de Dados</h4>
+        <p class="text-sm text-gray-600 mb-4">Último backup: 28/02/2024 23:45</p>
+        <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200">
+          <i class="fas fa-database mr-2"></i>Realizar Backup Agora
+        </button>
+      </div>
+      
+      <div>
+        <h4 class="text-md font-medium text-gray-800 mb-3">Exportação de Dados</h4>
+        <p class="text-sm text-gray-600 mb-4">Exportar todos os dados do sistema</p>
+        <div class="flex space-x-2">
+          <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200">
+            <i class="fas fa-file-excel mr-2"></i>Excel
+          </button>
+          <button class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-200">
+            <i class="fas fa-file-pdf mr-2"></i>PDF
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

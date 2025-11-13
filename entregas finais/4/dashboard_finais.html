@@ -48,12 +48,26 @@
 </head>
 <body class="bg-gray-100 font-sans">
   <!-- Header -->
+  <!-- Substituir o header atual por este: -->
   <header class="bg-white shadow-md p-4 flex justify-between items-center">
-    <h1 class="text-2xl font-bold text-blue-600">Meu Plano de Carreira</h1>
-    <div class="flex items-center space-x-4">
-      <span class="text-gray-700">Olá, João!</span>
-      <div class="w-10 h-10 bg-gray-300 rounded-full"></div>
-    </div>
+      <div class="flex items-center space-x-4">
+          <h1 class="text-2xl font-bold text-blue-600">Meu Plano de Carreira</h1>
+      </div>
+      <div class="flex items-center space-x-4">
+          <span class="text-gray-700" id="userName">Carregando...</span>
+          <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold" id="userAvatar">
+              J
+          </div>
+          <button 
+              onclick="logout()" 
+              class="text-sm text-gray-500 hover:text-red-600 transition duration-300"
+              title="Sair"
+          >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+              </svg>
+          </button>
+      </div>
   </header>
 
   <!-- Main Content -->
@@ -523,6 +537,61 @@
         
         updateSkillsCount();
     }
+    
+    // =============================================
+    // SISTEMA DE AUTENTICAÇÃO
+    // =============================================
+
+    function checkAuth() {
+        const user = JSON.parse(localStorage.getItem('loggedInUser'));
+        if (!user) {
+            window.location.href = 'login.html';
+            return null;
+        }
+        return user;
+    }
+
+    function updateUserInfo() {
+        const user = checkAuth();
+        if (user) {
+            document.getElementById('userName').textContent = `Olá, ${user.name.split(' ')[0]}!`;
+            document.getElementById('userAvatar').textContent = user.name.charAt(0);
+        }
+    }
+
+    function logout() {
+        if (confirm('Deseja realmente sair?')) {
+            localStorage.removeItem('loggedInUser');
+            window.location.href = 'login.html';
+        }
+    }
+
+    // =============================================
+    // INICIALIZAÇÃO ATUALIZADA
+    // =============================================
+    document.addEventListener('DOMContentLoaded', function() {
+        // Verificar autenticação
+        const user = checkAuth();
+        if (!user) return;
+
+        // Atualizar informações do usuário
+        updateUserInfo();
+
+        // Configurar funcionário ID baseado no usuário logado
+        if (window.apiServiceFuncionario) {
+            window.apiServiceFuncionario.funcionarioId = user.id;
+        }
+
+        // Carregar dados iniciais
+        loadDashboardStats();
+        loadMetas();
+        loadHabilidades();
+        loadMentorias();
+        
+        // Configurar formulários
+        setupFormHandlers();
+    });
+
 
     // =============================================
     // SISTEMA DE MENTORIAS (INTEGRADO COM API)

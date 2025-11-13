@@ -1475,64 +1475,74 @@
     // =============================================
     // FUNÇÕES DOS FUNCIONÁRIOS
     // =============================================
-    function loadEmployeesTable() {
-      const tbody = document.getElementById('employeeTableBody');
-      tbody.innerHTML = '';
-      
-      mockData.employees.forEach(emp => {
-        const progressRing = createProgressRing(emp.progresso);
-        const statusBadge = createStatusBadge(emp.status);
+    async function loadEmployeesTable(filters = {}) {
+    try {
+        const employees = await apiService.getEmployees(filters);
+        renderEmployeesTable(employees);
+    } catch (error) {
+        console.error('Erro ao carregar funcionários:', error);
+        showMessage('Erro ao carregar lista de funcionários', 'error');
+    }
+}
+
+    function renderEmployeesTable(employees) {
+        const tbody = document.getElementById('employeeTableBody');
+        tbody.innerHTML = '';
         
-        const row = document.createElement('tr');
-        row.className = 'hover:bg-gray-50';
-        row.innerHTML = `
-          <td class="px-6 py-4 whitespace-nowrap">
-            <div class="flex items-center">
-              <div class="flex-shrink-0 h-10 w-10">
-                <img class="h-10 w-10 rounded-full" src="${emp.foto}" alt="${emp.nome}">
-              </div>
-              <div class="ml-4">
-                <div class="text-sm font-medium text-gray-900">${emp.nome}</div>
-                <div class="text-sm text-gray-500">${emp.departamento}</div>
-              </div>
-            </div>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap">
-            <div class="text-sm text-gray-900">${emp.cargo}</div>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap">
-            <div class="text-sm text-gray-900">${emp.departamento}</div>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap">
-            <div class="flex items-center">
-              ${progressRing}
-              <div class="ml-2 w-20">
-                <div class="w-full bg-gray-200 rounded-full h-2">
-                  <div class="bg-green-500 h-2 rounded-full" style="width: ${emp.progresso}%"></div>
+        employees.forEach(emp => {
+            const progressRing = createProgressRing(emp.progresso);
+            const statusBadge = createStatusBadge(emp.status);
+            
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-gray-50';
+            row.innerHTML = `
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 h-10 w-10">
+                    <img class="h-10 w-10 rounded-full" src="${emp.foto}" alt="${emp.nome}">
+                  </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900">${emp.nome}</div>
+                    <div class="text-sm text-gray-500">${emp.departamento}</div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap">
-            ${statusBadge}
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-            <button onclick="viewEmployee(${emp.id})" class="text-indigo-600 hover:text-indigo-900 mr-3">
-              <i class="fas fa-eye"></i>
-            </button>
-            <button onclick="editEmployee(${emp.id})" class="text-blue-600 hover:text-blue-900 mr-3">
-              <i class="fas fa-edit"></i>
-            </button>
-            <button onclick="deleteEmployee(${emp.id})" class="text-red-600 hover:text-red-900">
-              <i class="fas fa-trash-alt"></i>
-            </button>
-          </td>
-        `;
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">${emp.cargo}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">${emp.departamento}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  ${progressRing}
+                  <div class="ml-2 w-20">
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="bg-green-500 h-2 rounded-full" style="width: ${emp.progresso}%"></div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                ${statusBadge}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <button onclick="viewEmployee(${emp.id})" class="text-indigo-600 hover:text-indigo-900 mr-3">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button onclick="editEmployee(${emp.id})" class="text-blue-600 hover:text-blue-900 mr-3">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button onclick="deleteEmployee(${emp.id})" class="text-red-600 hover:text-red-900">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </td>
+            `;
+            
+            tbody.appendChild(row);
+        });
         
-        tbody.appendChild(row);
-      });
-      
-      updatePaginationInfo(1, mockData.employees.length, mockData.employees.length);
+        updatePaginationInfo(1, employees.length, employees.length);
     }
 
     function viewEmployee(id) {
@@ -1566,21 +1576,28 @@
       }
     }
 
-    function loadEmployeeGoals(employeeId) {
-      const goalsList = document.getElementById('employeeGoalsList');
-      goalsList.innerHTML = '';
-      
-      const employeeGoals = mockData.goals.filter(goal => goal.funcionarioId === employeeId);
-      
-      if (employeeGoals.length === 0) {
-        goalsList.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma meta atribuída</p>';
-        return;
-      }
-      
-      employeeGoals.forEach(meta => {
-        const goalElement = createGoalElement(employeeId, meta);
-        goalsList.appendChild(goalElement);
-      });
+    async function loadEmployeeGoals(employeeId) {
+        try {
+            const goals = await apiService.getEmployeeGoals(employeeId);
+            renderEmployeeGoals(employeeId, goals);
+        } catch (error) {
+            console.error('Erro ao carregar metas do funcionário:', error);
+        }
+    }
+
+    function renderEmployeeGoals(employeeId, goals) {
+        const goalsList = document.getElementById('employeeGoalsList');
+        goalsList.innerHTML = '';
+        
+        if (goals.length === 0) {
+            goalsList.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma meta atribuída</p>';
+            return;
+        }
+        
+        goals.forEach(meta => {
+            const goalElement = createGoalElement(employeeId, meta);
+            goalsList.appendChild(goalElement);
+        });
     }
 
     function showEmployeeTab(tabName) {
@@ -1629,22 +1646,32 @@
     // =============================================
     // FUNÇÕES DAS METAS
     // =============================================
-    function loadGoals() {
-      const activeGoalsList = document.getElementById('activeGoalsList');
-      const completedGoalsList = document.getElementById('completedGoalsList');
-      
-      activeGoalsList.innerHTML = '';
-      completedGoalsList.innerHTML = '';
-      
-      mockData.goals.forEach(goal => {
-        const goalElement = createGoalElement(goal.funcionarioId, goal);
-        
-        if (goal.status === 'em_andamento') {
-          activeGoalsList.appendChild(goalElement);
-        } else {
-          completedGoalsList.appendChild(goalElement);
+    async function loadGoals() {
+        try {
+            const goals = await apiService.getGoals();
+            renderGoals(goals);
+        } catch (error) {
+            console.error('Erro ao carregar metas:', error);
+            showMessage('Erro ao carregar metas', 'error');
         }
-      });
+    }
+
+    function renderGoals(goals) {
+        const activeGoalsList = document.getElementById('activeGoalsList');
+        const completedGoalsList = document.getElementById('completedGoalsList');
+        
+        activeGoalsList.innerHTML = '';
+        completedGoalsList.innerHTML = '';
+        
+        goals.forEach(goal => {
+            const goalElement = createGoalElement(goal.funcionarioId, goal);
+            
+            if (goal.status === 'em_andamento') {
+                activeGoalsList.appendChild(goalElement);
+            } else {
+                completedGoalsList.appendChild(goalElement);
+            }
+        });
     }
 
     function createGoalElement(employeeId, goal) {
@@ -1850,12 +1877,23 @@
         }
       });
 
+      // Carregar dados iniciais
+      loadDashboardStats();
+
       // Configurar formulários
-      document.getElementById('addEmployeeForm').addEventListener('submit', function(e) {
+      document.getElementById('addEmployeeForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        showMessage('Funcionário adicionado com sucesso!', 'success');
-        closeAddEmployeeForm();
-        loadEmployeesTable();
+        const formData = new FormData(this);
+        const employeeData = Object.fromEntries(formData);
+        
+        try {
+            await apiService.createEmployee(employeeData);
+            showMessage('Funcionário adicionado com sucesso!', 'success');
+            closeAddEmployeeForm();
+            loadEmployeesTable();
+        } catch (error) {
+            showMessage(`Erro ao adicionar funcionário: ${error.message}`, 'error');
+        }
       });
 
       document.getElementById('addGoalForm').addEventListener('submit', function(e) {
@@ -1882,6 +1920,23 @@
 
       showMessage('Sistema carregado com sucesso!', 'success');
     });
+
+    async function loadDashboardStats() {
+        try {
+            const stats = await apiService.getDashboardStats();
+            
+            // Atualizar cards do dashboard
+            document.getElementById('totalEmployees').textContent = stats.totalEmployees;
+            document.getElementById('activeGoals').textContent = stats.activeGoals;
+            document.getElementById('activeTrainings').textContent = stats.activeTrainings;
+            document.getElementById('pendingEvaluations').textContent = stats.pendingEvaluations;
+            
+        } catch (error) {
+            console.error('Erro ao carregar estatísticas:', error);
+        }
+    }
   </script>
+  <script src="mock-backend.js"></script>
+  <script src="api-service.js"></script>
 </body>
 </html>

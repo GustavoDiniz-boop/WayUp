@@ -1,0 +1,158 @@
+<div class="page-active">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-gray-800">Avaliações de Desempenho</h2>
+    <button onclick="evaluations.showAddEvaluationForm()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">
+      <i class="fas fa-plus mr-2"></i>Nova Avaliação
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Avaliações Pendentes -->
+    <div class="bg-white rounded-xl shadow-md p-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Avaliações Pendentes</h3>
+      <div class="space-y-4">
+        <div class="border border-gray-200 rounded-lg p-4">
+          <div class="flex justify-between items-start">
+            <div class="flex-1">
+              <h4 class="font-medium">Avaliação Trimestral - Q1 2024</h4>
+              <p class="text-sm text-gray-500 mt-1">Período: Jan-Mar 2024</p>
+            </div>
+            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+              Pendente
+            </span>
+          </div>
+          <div class="mt-3">
+            <div class="flex justify-between text-sm text-gray-500">
+              <span>Vence em: 15/03/2024</span>
+              <span>12 funcionários</span>
+            </div>
+          </div>
+          <button class="w-full mt-3 bg-yellow-600 text-white py-2 rounded-lg hover:bg-yellow-700 transition duration-200">
+            Realizar Avaliação
+          </button>
+        </div>
+
+        <div class="border border-gray-200 rounded-lg p-4">
+          <div class="flex justify-between items-start">
+            <div class="flex-1">
+              <h4 class="font-medium">Avaliação de Competências</h4>
+              <p class="text-sm text-gray-500 mt-1">Habilidades técnicas e comportamentais</p>
+            </div>
+            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+              Pendente
+            </span>
+          </div>
+          <div class="mt-3">
+            <div class="flex justify-between text-sm text-gray-500">
+              <span>Vence em: 20/03/2024</span>
+              <span>8 funcionários</span>
+            </div>
+          </div>
+          <button class="w-full mt-3 bg-yellow-600 text-white py-2 rounded-lg hover:bg-yellow-700 transition duration-200">
+            Realizar Avaliação
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Avaliações Concluídas -->
+    <div class="bg-white rounded-xl shadow-md p-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Avaliações Concluídas</h3>
+      <div class="space-y-4">
+        <div class="border border-gray-200 rounded-lg p-4">
+          <div class="flex justify-between items-start">
+            <div class="flex-1">
+              <h4 class="font-medium">Avaliação Anual 2023</h4>
+              <p class="text-sm text-gray-500 mt-1">Período: 2023</p>
+            </div>
+            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+              Concluída
+            </span>
+          </div>
+          <div class="mt-3">
+            <div class="flex justify-between text-sm text-gray-500">
+              <span>Concluída em: 15/12/2023</span>
+              <span>24 funcionários</span>
+            </div>
+          </div>
+          <div class="mt-2">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Média Geral:</span>
+              <span class="font-medium text-green-600">4.3/5.0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="border border-gray-200 rounded-lg p-4">
+          <div class="flex justify-between items-start">
+            <div class="flex-1">
+              <h4 class="font-medium">Avaliação de Projeto</h4>
+              <p class="text-sm text-gray-500 mt-1">Projeto: Sistema de Gestão</p>
+            </div>
+            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+              Concluída
+            </span>
+          </div>
+          <div class="mt-3">
+            <div class="flex justify-between text-sm text-gray-500">
+              <span>Concluída em: 28/02/2024</span>
+              <span>6 funcionários</span>
+            </div>
+          </div>
+          <div class="mt-2">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Média Geral:</span>
+              <span class="font-medium text-green-600">4.7/5.0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Métricas de Desempenho -->
+    <div class="bg-white rounded-xl shadow-md p-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Métricas de Desempenho</h3>
+      <div class="space-y-6">
+        <div>
+          <div class="flex justify-between text-sm mb-2">
+            <span class="text-gray-600">Satisfação no Trabalho</span>
+            <span class="font-medium">4.2/5.0</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="bg-green-500 h-2 rounded-full" style="width: 84%"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between text-sm mb-2">
+            <span class="text-gray-600">Competências Técnicas</span>
+            <span class="font-medium">4.5/5.0</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="bg-blue-500 h-2 rounded-full" style="width: 90%"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between text-sm mb-2">
+            <span class="text-gray-600">Habilidades Interpessoais</span>
+            <span class="font-medium">4.1/5.0</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="bg-purple-500 h-2 rounded-full" style="width: 82%"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between text-sm mb-2">
+            <span class="text-gray-600">Produtividade</span>
+            <span class="font-medium">4.3/5.0</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="bg-yellow-500 h-2 rounded-full" style="width: 86%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

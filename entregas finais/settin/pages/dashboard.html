@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - FacilitaRH</title>
+  
+  <!-- TODAS as dependências do seu projeto original -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- CSS original do seu projeto -->
+  <style>
+    .page { display: none; }
+    .page-active { display: block; }
+    .loading { opacity: 0.6; pointer-events: none; }
+    .btn-loading { position: relative; color: transparent; }
+    .btn-loading::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: 50%;
+      left: 50%;
+      margin-left: -8px;
+      margin-top: -8px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      border-right-color: transparent;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .error-message {
+      background-color: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    .success-message {
+      background-color: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #16a34a;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    .sidebar { width: 280px; transition: all 0.3s; }
+    .sidebar.collapsed { width: 80px; }
+    .progress-ring { transform: rotate(-90deg); }
+    .progress-ring-circle { transition: stroke-dashoffset 0.3s; }
+    .tab-button {
+      padding: 12px 24px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+    }
+    .tab-button.active {
+      border-bottom-color: #4f46e5;
+      color: #4f46e5;
+      font-weight: 600;
+    }
+    .collapse-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+    }
+    .collapse-content.expanded { max-height: 500px; }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <!-- Layout completo igual ao seu projeto original -->
+  <div class="flex h-screen overflow-hidden">
+    
+    <!-- Sidebar -->
+    <div class="sidebar bg-indigo-800 text-white flex flex-col">
+      <div class="p-6 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center">
+            <i class="fas fa-chart-line text-white"></i>
+          </div>
+          <span class="text-xl font-bold">FacilitaRH</span>
+        </div>
+        <button id="sidebarToggle" class="text-white hover:bg-indigo-700 p-2 rounded-lg">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+
+      <nav class="flex-1 px-4 py-6">
+        <ul class="space-y-2">
+          <li>
+            <a href="../index.html" class="flex items-center space-x-3 p-3 rounded-lg bg-indigo-700 hover:bg-indigo-600 transition duration-200">
+              <i class="fas fa-tachometer-alt w-6 text-center"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="employees.html" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-indigo-600 transition duration-200">
+              <i class="fas fa-users w-6 text-center"></i>
+              <span>Funcionários</span>
+            </a>
+          </li>
+          <!-- ... resto da sidebar igual ao seu original -->
+        </ul>
+      </nav>
+
+      <div class="p-4 border-t border-indigo-700">
+        <div class="flex items-center space-x-3 p-3">
+          <img class="w-10 h-10 rounded-full" src="https://via.placeholder.com/40" alt="Gestor">
+          <div class="flex-1">
+            <p class="text-sm font-medium">João Silva</p>
+            <p class="text-xs text-indigo-200">Gestor de RH</p>
+          </div>
+          <button class="text-indigo-200 hover:text-white">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- Header -->
+      <header class="bg-white shadow-sm">
+        <div class="flex items-center justify-between p-4">
+          <h1 class="text-2xl font-bold text-gray-800">Dashboard do Gestor</h1>
+          <div class="flex items-center space-x-4">
+            <div class="relative">
+              <i class="fas fa-bell text-gray-500 hover:text-indigo-600 cursor-pointer"></i>
+              <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+            </div>
+            <div class="relative">
+              <input type="text" placeholder="Pesquisar..." class="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Área de Mensagens -->
+      <div id="messageArea" class="mx-6 mt-4"></div>
+
+      <!-- Conteúdo do Dashboard (EXATAMENTE igual ao seu) -->
+      <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+        <div class="page page-active">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Card Total de Funcionários -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-gray-500 text-sm">Total de Funcionários</p>
+                  <h3 class="text-3xl font-bold text-gray-800 mt-2" id="totalEmployees">24</h3>
+                </div>
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <i class="fas fa-users text-blue-600 text-xl"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center text-sm text-green-600">
+                <i class="fas fa-arrow-up mr-1"></i>
+                <span>+2 desde o último mês</span>
+              </div>
+            </div>
+
+            <!-- ... RESTANTE DO SEU CÓDIGO DO DASHBOARD ORIGINAL ... -->
+            
+          </div>
+
+          <!-- Gráficos e Tabelas -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Gráfico de Desempenho -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Desempenho da Equipe</h3>
+              <div class="h-80">
+                <canvas id="performanceChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Últimas Atividades -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Últimas Atividades</h3>
+              <div class="space-y-4">
+                <!-- ... suas atividades originais ... -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- JavaScript do Dashboard -->
+  <script>
+    // Seu código JavaScript original do dashboard
+    document.addEventListener('DOMContentLoaded', function() {
+      // Gráfico de desempenho
+      const ctx = document.getElementById('performanceChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+          datasets: [{
+            label: 'Desempenho',
+            data: [85, 78, 90, 82, 88, 92],
+            backgroundColor: '#4f46e5',
+            borderColor: '#4f46e5',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100
+            }
+          }
+        }
+      });
+
+      // Sidebar toggle
+      document.getElementById('sidebarToggle').addEventListener('click', function() {
+        document.querySelector('.sidebar').classList.toggle('collapsed');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FacilitaRH - Dashboard Gestor</title>
+  
+  <!-- CSS Libraries -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- App CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body class="bg-gray-50">
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- Header -->
+      <div id="header-container"></div>
+
+      <!-- Área de Mensagens -->
+      <div id="messageArea" class="mx-6 mt-4"></div>
+
+      <!-- Conteúdo das páginas -->
+      <main id="main-content" class="flex-1 overflow-y-auto p-6 bg-gray-50">
+        <!-- Dashboard será carregado aqui inicialmente -->
+        <div id="dashboard-page"></div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modais -->
+  <div id="modals-container"></div>
+
+  <!-- JavaScript Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- App JavaScript -->
+  <script src="js/utils.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

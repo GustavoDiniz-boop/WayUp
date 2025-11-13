@@ -1,0 +1,132 @@
+<div class="page-active">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Card Total de Funcionários -->
+    <div class="bg-white rounded-xl shadow-md p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-gray-500 text-sm">Total de Funcionários</p>
+          <h3 class="text-3xl font-bold text-gray-800 mt-2" id="totalEmployees">24</h3>
+        </div>
+        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+          <i class="fas fa-users text-blue-600 text-xl"></i>
+        </div>
+      </div>
+      <div class="mt-4 flex items-center text-sm text-green-600">
+        <i class="fas fa-arrow-up mr-1"></i>
+        <span>+2 desde o último mês</span>
+      </div>
+    </div>
+
+    <!-- Card Metas em Andamento -->
+    <div class="bg-white rounded-xl shadow-md p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-gray-500 text-sm">Metas em Andamento</p>
+          <h3 class="text-3xl font-bold text-gray-800 mt-2" id="activeGoals">18</h3>
+        </div>
+        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+          <i class="fas fa-bullseye text-green-600 text-xl"></i>
+        </div>
+      </div>
+      <div class="mt-4 flex items-center text-sm text-green-600">
+        <i class="fas fa-arrow-up mr-1"></i>
+        <span>75% de conclusão</span>
+      </div>
+    </div>
+
+    <!-- Card Treinamentos Ativos -->
+    <div class="bg-white rounded-xl shadow-md p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-gray-500 text-sm">Treinamentos Ativos</p>
+          <h3 class="text-3xl font-bold text-gray-800 mt-2" id="activeTrainings">8</h3>
+        </div>
+        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+          <i class="fas fa-graduation-cap text-purple-600 text-xl"></i>
+        </div>
+      </div>
+      <div class="mt-4 flex items-center text-sm text-green-600">
+        <i class="fas fa-arrow-up mr-1"></i>
+        <span>+3 novos este mês</span>
+      </div>
+    </div>
+
+    <!-- Card Avaliações Pendentes -->
+    <div class="bg-white rounded-xl shadow-md p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-gray-500 text-sm">Avaliações Pendentes</p>
+          <h3 class="text-3xl font-bold text-gray-800 mt-2" id="pendingEvaluations">5</h3>
+        </div>
+        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+          <i class="fas fa-clipboard-check text-yellow-600 text-xl"></i>
+        </div>
+      </div>
+      <div class="mt-4 flex items-center text-sm text-red-600">
+        <i class="fas fa-clock mr-1"></i>
+        <span>Vencem em 7 dias</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficos e Tabelas -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Gráfico de Desempenho -->
+    <div class="bg-white rounded-xl shadow-md p-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Desempenho da Equipe</h3>
+      <div class="h-80">
+        <canvas id="performanceChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Últimas Atividades -->
+    <div class="bg-white rounded-xl shadow-md p-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Últimas Atividades</h3>
+      <div class="space-y-4">
+        <div class="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
+          <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+            <i class="fas fa-user-plus text-blue-600 text-sm"></i>
+          </div>
+          <div class="flex-1">
+            <p class="text-sm font-medium">Novo funcionário contratado</p>
+            <p class="text-xs text-gray-500">Maria Santos - Desenvolvedora Front-end</p>
+          </div>
+          <span class="text-xs text-gray-400">2h atrás</span>
+        </div>
+
+        <div class="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
+          <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+            <i class="fas fa-bullseye text-green-600 text-sm"></i>
+          </div>
+          <div class="flex-1">
+            <p class="text-sm font-medium">Meta concluída</p>
+            <p class="text-xs text-gray-500">João Silva - Certificação Cloud</p>
+          </div>
+          <span class="text-xs text-gray-400">1 dia atrás</span>
+        </div>
+
+        <div class="flex items-center space-x-3 p-3 bg-purple-50 rounded-lg">
+          <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+            <i class="fas fa-graduation-cap text-purple-600 text-sm"></i>
+          </div>
+          <div class="flex-1">
+            <p class="text-sm font-medium">Treinamento iniciado</p>
+            <p class="text-xs text-gray-500">Liderança e Gestão de Equipes</p>
+          </div>
+          <span class="text-xs text-gray-400">2 dias atrás</span>
+        </div>
+
+        <div class="flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg">
+          <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+            <i class="fas fa-clipboard-check text-yellow-600 text-sm"></i>
+          </div>
+          <div class="flex-1">
+            <p class="text-sm font-medium">Avaliação agendada</p>
+            <p class="text-xs text-gray-500">Avaliação de desempenho trimestral</p>
+          </div>
+          <span class="text-xs text-gray-400">3 dias atrás</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
